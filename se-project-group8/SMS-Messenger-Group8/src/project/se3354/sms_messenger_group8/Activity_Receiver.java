@@ -8,8 +8,9 @@ import android.telephony.SmsMessage;
 import android.widget.Toast;
 
 /* device receive the message and give a popup with the number and message body*/
-public class SmsReceiver extends BroadcastReceiver
+public class Activity_Receiver extends BroadcastReceiver
 {
+	 
     @Override
     public void onReceive(Context context, Intent intent) 
     {
@@ -25,18 +26,20 @@ public class SmsReceiver extends BroadcastReceiver
             for (int i=0; i<msgs.length; i++){
                 msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]);                
                 smsString += "SMS from " + msgs[i].getOriginatingAddress();                     
-                smsString += " :";
+                smsString += " : ";
                 smsString += msgs[i].getMessageBody().toString();
                 smsString += "\n";        
             }
             /* display the new message */
             Toast.makeText(context, smsString, Toast.LENGTH_LONG).show();
-            
-
-
+            /*Write newly received message in the TextView box*/
+            MainActivity addRev=new MainActivity();
+            addRev.txtReceive.setText(smsString);
 
         } 
         
+
     }
+
     
 }

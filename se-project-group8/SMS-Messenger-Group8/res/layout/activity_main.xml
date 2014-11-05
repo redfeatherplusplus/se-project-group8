@@ -61,7 +61,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_weight="1"
                 android:text="Send"
-                android:textColorHint="@android:color/hint_foreground_holo_light" />
+                />
  
             <Button android:layout_height="wrap_content"
                 android:id="@+id/btnScheduleSend"
@@ -125,7 +125,7 @@
         <TextView  
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content" 
-        android:text="Newest received message"
+        android:text="Newest message"
         />     
         <TextView  
         android:id="@+id/txtReceive" 

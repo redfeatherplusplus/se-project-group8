@@ -20,6 +20,8 @@ public class MainActivity extends Activity
 	EditText txtPhoneNo;
 	EditText txtMessage;
 	
+	static TextView txtReceive;
+
     /* Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) 
@@ -30,6 +32,8 @@ public class MainActivity extends Activity
         btnSendSMS = (Button) findViewById(R.id.btnSendSMS);
         txtPhoneNo = (EditText) findViewById(R.id.txtPhoneNo);
         txtMessage = (EditText) findViewById(R.id.txtMessage);
+        
+        txtReceive=(TextView)findViewById(R.id.txtReceive); //TextView box for newest message
         
         /*------built-in intent method is hidden here----------
         Intent sendIntent = new Intent(Intent.ACTION_VIEW);
@@ -45,7 +49,9 @@ public class MainActivity extends Activity
         }      
         You can try it to see how easy it will be-------------------------*/
         
-        /* Action when click "Send" button */        
+        
+        
+        /* Action when click "Send" button */             
         btnSendSMS.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) 
@@ -56,6 +62,10 @@ public class MainActivity extends Activity
             	/* Error reports, when phone number or/and message is empty  */
                 if (phoneNo.length()>0 && message.length()>0) {               
                     sendSMS(phoneNo, message);
+                    /*Write newly sent message in the TextView box*/
+                    txtReceive.setText("SMS sent to "+phoneNo+" : "+message);
+                    //Activity_TextView.addNewSMS("SMS sent to "+phoneNo+" : "+message);//ongoing by binz
+
                 }
                 else if (phoneNo.length()==0 && message.length()>0) {
                 	Toast.makeText(getBaseContext(), 
