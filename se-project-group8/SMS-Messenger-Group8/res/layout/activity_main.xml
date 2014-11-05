@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <TextView  
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" 
+        android:text="Enter a new number"
+        />     
+
+    <EditText 
+        android:id="@+id/txtPhoneNo"  
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"        
+        />
+    
+    <LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+            <Button android:layout_height="wrap_content"
+                 android:id="@+id/btnFindContactNo"
+                 android:text="From contacts"
+                 android:layout_width="wrap_content"
+                 android:layout_weight="1"
+                 android:layout_alignParentBottom="true">
+            </Button>
+ 
+            <Button android:layout_height="wrap_content"
+                android:id="@+id/btnAddMoreNo"
+                 android:text="Add more"
+                 android:layout_width="wrap_content"
+                 android:layout_weight="1"
+                 android:layout_alignParentBottom="true">
+           </Button>
+ 
+    </LinearLayout>      
+       
+    <TextView  
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"         
+        android:text="Message Text"
+        />     
+    <EditText 
+        android:id="@+id/txtMessage"  
+        android:layout_width="fill_parent" 
+        android:layout_height="150px"
+        android:gravity="top"         
+        />          
+    <LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+
+            <Button
+                android:id="@+id/btnSendSMS"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_weight="1"
+                android:text="Send"
+                android:textColorHint="@android:color/hint_foreground_holo_light" />
+ 
+            <Button android:layout_height="wrap_content"
+                android:id="@+id/btnScheduleSend"
+                 android:text="Send later"
+                 android:layout_width="wrap_content"
+                 android:layout_weight="1"
+                 android:layout_alignParentBottom="true"
+                 />
+ 
+    </LinearLayout>
+    
+    <TextView  
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" 
+        android:text="Search Message"
+        />     
+
+    <EditText 
+        android:id="@+id/txtContacts"  
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:text="Search by phone number or contact name"        
+        />
+    
+    <LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+            <Button android:layout_height="wrap_content"
+                 android:id="@+id/btnSearchNo"
+                 android:text="Search number"
+                 android:layout_width="wrap_content"
+                 android:layout_weight="1"
+                 android:layout_alignParentBottom="true"
+                 />
+ 
+            <Button android:layout_height="wrap_content"
+                android:id="@+id/btnSearchName"
+                 android:text="Search Name"
+                 android:layout_width="wrap_content"
+                 android:layout_weight="1"
+                 android:layout_alignParentBottom="true"
+                 />
+ 
+    </LinearLayout>
+    
+    <Button 
+        android:id="@+id/btnInbox"  
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:text="Get into Inbox"
+        />
+          
+     <Button 
+        android:id="@+id/btnSetAutoReply"  
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:text="Setting for Auto-reply"
+        />
+     
+        <TextView  
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" 
+        android:text="Newest received message"
+        />     
+        <TextView  
+        android:id="@+id/txtReceive" 
+        android:layout_width="fill_parent" 
+        android:layout_height="200px" 
+        /> 
+    
+</LinearLayout>
