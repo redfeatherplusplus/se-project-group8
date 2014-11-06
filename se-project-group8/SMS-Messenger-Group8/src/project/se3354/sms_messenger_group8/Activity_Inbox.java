@@ -82,9 +82,9 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				String Contact = ContactsList.getItemAtPosition(position).toString();
+				Cursor Contact = (Cursor) parent.getItemAtPosition(position);
                 Toast.makeText(getApplicationContext(), 
-                		Contact + " doesn't like you.", 
+                		Contact.getString(1) + " doesn't like you.", 
                 		Toast.LENGTH_LONG).show();
 			}
 		}); 
