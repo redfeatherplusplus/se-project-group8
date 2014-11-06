@@ -16,7 +16,9 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity 
 {
+	Button btnFindContactNo;
 	Button btnSendSMS;
+	Button btnScheduleSend;
 	EditText txtPhoneNo;
 	EditText txtMessage;
 	
@@ -28,8 +30,10 @@ public class MainActivity extends Activity
     {   
     	
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);        
+        setContentView(R.layout.activity_main);       
+        btnFindContactNo = (Button) findViewById(R.id.btnFindContactNo); 
         btnSendSMS = (Button) findViewById(R.id.btnSendSMS);
+        btnScheduleSend = (Button) findViewById(R.id.btnScheduleSend);
         txtPhoneNo = (EditText) findViewById(R.id.txtPhoneNo);
         txtMessage = (EditText) findViewById(R.id.txtMessage);
         
@@ -49,7 +53,14 @@ public class MainActivity extends Activity
         }      
         You can try it to see how easy it will be-------------------------*/
         
-        
+        /* Action when click "From Contacts" button */             
+        btnFindContactNo.setOnClickListener(new View.OnClickListener() 
+        {
+            public void onClick(View v) { 
+            	Intent myIntent = new Intent(v.getContext(), Activity_Inbox.class);
+                startActivityForResult(myIntent, 0);
+            }
+        });
         
         /* Action when click "Send" button */             
         btnSendSMS.setOnClickListener(new View.OnClickListener() 
@@ -82,6 +93,14 @@ public class MainActivity extends Activity
                         "Both phone number and message are missing", 
                         Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+        
+        /* Action when click "Send Later" button */             
+        btnScheduleSend.setOnClickListener(new View.OnClickListener() 
+        {
+            public void onClick(View v) { 
+            	//do stuff
             }
         });
 

@@ -42,13 +42,18 @@
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"         
         android:text="Message Text"
-        />     
-    <EditText 
-        android:id="@+id/txtMessage"  
-        android:layout_width="fill_parent" 
+        />
+
+    <EditText
+        android:id="@+id/txtMessage"
+        android:layout_width="fill_parent"
         android:layout_height="150px"
-        android:gravity="top"         
-        />          
+        android:ems="10"
+        android:gravity="top" >
+
+        <requestFocus />
+    </EditText>
+          
     <LinearLayout
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -126,11 +131,11 @@
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content" 
         android:text="Newest message"
-        />     
-        <TextView  
-        android:id="@+id/txtReceive" 
-        android:layout_width="fill_parent" 
-        android:layout_height="200px" 
-        /> 
+        />
+
+        <TextView
+            android:id="@+id/txtReceive"
+            android:layout_width="fill_parent"
+            android:layout_height="200px" />
     
 </LinearLayout>
