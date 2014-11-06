@@ -19,6 +19,7 @@ public class MainActivity extends Activity
 	Button btnFindContactNo;
 	Button btnSendSMS;
 	Button btnScheduleSend;
+	Button btnInbox;
 	EditText txtPhoneNo;
 	EditText txtMessage;
 	
@@ -31,9 +32,12 @@ public class MainActivity extends Activity
     	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);       
+        
         btnFindContactNo = (Button) findViewById(R.id.btnFindContactNo); 
         btnSendSMS = (Button) findViewById(R.id.btnSendSMS);
         btnScheduleSend = (Button) findViewById(R.id.btnScheduleSend);
+        btnInbox = (Button) findViewById(R.id.btnInbox);
+        
         txtPhoneNo = (EditText) findViewById(R.id.txtPhoneNo);
         txtMessage = (EditText) findViewById(R.id.txtMessage);
         
@@ -75,7 +79,10 @@ public class MainActivity extends Activity
                     sendSMS(phoneNo, message);
                     /*Write newly sent message in the TextView box*/
                     txtReceive.setText("SMS sent to "+phoneNo+" : "+message);
-                    //Activity_TextView.addNewSMS("SMS sent to "+phoneNo+" : "+message);//ongoing by binz
+                    
+                    //Clear phone number box and message box after Sending
+                    txtPhoneNo.setText(null);
+                    txtMessage.setText(null);
 
                 }
                 else if (phoneNo.length()==0 && message.length()>0) {
@@ -96,11 +103,21 @@ public class MainActivity extends Activity
             }
         });
         
+                
         /* Action when click "Send Later" button */             
         btnScheduleSend.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) { 
             	//do stuff
+            }
+        });
+        
+        /* Action when click "Get into Inbox" button.--- Main layout-->Inbox layout----*/             
+        btnInbox.setOnClickListener(new View.OnClickListener() 
+        {
+            public void onClick(View v) { 
+            	Intent i= new Intent(MainActivity.this, Activity_Inbox.class);
+                startActivity(i);
             }
         });
 
@@ -172,5 +189,8 @@ public class MainActivity extends Activity
         
         SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);               
-    }    
+    }
+   
+
+
 }
