@@ -7,9 +7,13 @@ import android.provider.ContactsContract;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -20,19 +24,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class Activity_Inbox extends Activity{ //implements LoaderManager.LoaderCallbacks<Cursor> {
+public class Activity_Inbox extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	Button btnReturn;
+	ListView ContactsList;
 	
     /* Called when the activity is first created. */
 	
 	//////////////////////////
 	// Create Contacts List //
 	//////////////////////////
-
-	/*
 	
-	// This is the Adapter being used to display the list's data
+	//This is the Adapter being used to display the list's data
 	SimpleCursorAdapter mAdapter;
 	
 	// These are the Contacts rows that we will retrieve
@@ -44,28 +47,19 @@ public class Activity_Inbox extends Activity{ //implements LoaderManager.LoaderC
 	    ContactsContract.Data.DISPLAY_NAME + " NOTNULL) AND (" +
 	    ContactsContract.Data.DISPLAY_NAME + " != '' ))";
 	    
-	    */
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_inbox);
-	
+	    ContactsList = (ListView) findViewById(R.id.ContactsList);
 	    btnReturn = (Button) findViewById(R.id.btnReturn);
-	    btnReturn.setOnClickListener(new View.OnClickListener() {
-	        public void onClick(View v) {
-	            Intent intent = new Intent();
-	            setResult(RESULT_OK, intent);
-	            finish();
-	        }
-	    });
 	
-		/*// Create a progress bar to display while the list loads
+		// Create a progress bar to display while the list loads
 		ProgressBar progressBar = new ProgressBar(this);
 		progressBar.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
 		        LayoutParams.WRAP_CONTENT, Gravity.CENTER));
 		progressBar.setIndeterminate(true);
-		getListView().setEmptyView(progressBar);
+		ContactsList.setEmptyView(progressBar);
 		
 		// Must add the progress bar to the root of the layout
 		ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
@@ -75,19 +69,49 @@ public class Activity_Inbox extends Activity{ //implements LoaderManager.LoaderC
 		String[] fromColumns = {ContactsContract.Data.DISPLAY_NAME};
 		
 		int[] toViews = {android.R.id.text1}; // The TextView in simple_list_item_1
+		
 		// Create an empty adapter we will use to display the loaded data.
 		// We pass null for the cursor, then update it in onLoadFinished()
 		mAdapter = new SimpleCursorAdapter(this, 
 		        android.R.layout.simple_list_item_1, null,
 		        fromColumns, toViews, 0);
-		setListAdapter(mAdapter);
+		ContactsList.setAdapter(mAdapter);
+		
+		/* Action when click on Contact Item */
+		ContactsList.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				String Contact = ContactsList.getItemAtPosition(position).toString();
+                Toast.makeText(getApplicationContext(), 
+                		Contact + " doesn't like you.", 
+                		Toast.LENGTH_LONG).show();
+			}
+		}); 
+		
+	    /* Action when click "Return" button */
+	    btnReturn.setOnClickListener(new View.OnClickListener() {
+	        public void onClick(View v) {
+	            Intent intent = new Intent();
+	            setResult(RESULT_OK, intent);
+	            finish();
+	        }
+	    });
+	    
+	    /* Action when click "Return" button */
+	    btnReturn.setOnClickListener(new View.OnClickListener() {
+	        public void onClick(View v) {
+	            Intent intent = new Intent();
+	            setResult(RESULT_OK, intent);
+	            finish();
+	        }
+	    });
 		
 		// Prepare the loader.  Either re-connect with an existing one,
 		// or start a new one.
 		getLoaderManager().initLoader(0, null, this);
-		*/
 	}
-	/*
+	
 	// Called when a new Loader needs to be created
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 	// Now create and return a CursorLoader that will take care of
@@ -111,9 +135,4 @@ public class Activity_Inbox extends Activity{ //implements LoaderManager.LoaderC
 	mAdapter.swapCursor(null);
 	}
 	
-	@Override 
-	public void onListItemClick(ListView l, View v, int position, long id) {
-	// Do something when a list item is clicked 
-	// WE REALLY NEED TO DO SOMETHING WHEN AN ITEM IS CLICKED
-	} */
 }
