@@ -52,15 +52,7 @@ public class Activity_Contacts extends Activity implements LoaderManager.LoaderC
 	    btnReturn = (Button) findViewById(R.id.btnReturn);
 	
 		// Create a progress bar to display while the list loads
-		ProgressBar progressBar = new ProgressBar(this);
-		progressBar.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
-		        LayoutParams.WRAP_CONTENT, Gravity.CENTER));
-		progressBar.setIndeterminate(true);
 		ContactsList.setEmptyView(findViewById(R.id.loadingScreen));
-		
-		// Must add the progress bar to the root of the layout
-		//ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
-		//root.addView(progressBar);
 		
 		// For the cursor adapter, specify which columns go into which views
 		String[] fromColumns = {ContactsContract.Data.DISPLAY_NAME};

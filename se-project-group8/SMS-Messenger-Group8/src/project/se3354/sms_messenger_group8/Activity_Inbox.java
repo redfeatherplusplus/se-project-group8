@@ -35,6 +35,8 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	
 	// Create Inbox box URI
 	Uri inboxURI = Uri.parse("content://sms/inbox");
+	Uri sentURI = Uri.parse("content://sms/sent");
+	Uri draftURI = Uri.parse("content://sms/draft");
 	 
 	// List required columns
 	String[] reqCols = new String[] { "_id", "address", "body" };
@@ -42,7 +44,7 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	// Get Content Resolver object, which will deal with Content Provider
 	ContentResolver cr = getContentResolver();
 	 
-	// Fetch Inbox SMS Message from Built-in Content Provider
+	// Fetch All SMS Messages from Built-in Content Provider
 	Cursor c = cr.query(inboxURI, reqCols, null, null, null);
 	
 	//This is the Adapter being used to display the list's data
