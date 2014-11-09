@@ -61,7 +61,7 @@ public class MainActivity extends Activity
         btnFindContactNo.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) { 
-            	Intent myIntent = new Intent(v.getContext(), Activity_Inbox.class);
+            	Intent myIntent = new Intent(v.getContext(), Activity_Contacts.class);
                 startActivityForResult(myIntent, 0);
             }
         });
@@ -115,9 +115,8 @@ public class MainActivity extends Activity
         /* Action when click "Get into Inbox" button.--- Main layout-->Inbox layout----*/             
         btnInbox.setOnClickListener(new View.OnClickListener() 
         {
-            public void onClick(View v) { 
-            	Intent i= new Intent(MainActivity.this, Activity_Inbox.class);
-                startActivity(i);
+            public void onClick(View v) {
+            	//do stuff
             }
         });
 

@@ -24,7 +24,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class Activity_Inbox extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class Activity_Contacts extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	Button btnReturn;
 	ListView ContactsList;
