@@ -116,7 +116,8 @@ public class MainActivity extends Activity
         btnInbox.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) {
-            	//do stuff
+            	Intent myIntent = new Intent(v.getContext(), Activity_Inbox.class);
+                startActivityForResult(myIntent, 0);
             }
         });
 

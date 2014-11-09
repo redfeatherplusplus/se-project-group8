@@ -1,6 +1,7 @@
 package project.se3354.sms_messenger_group8;
 
 import android.app.ActionBar.LayoutParams;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.Gravity;
@@ -10,10 +11,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import android.app.LoaderManager;
+import android.content.ContentResolver;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -21,7 +22,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.widget.Button;
 
-public class Activity_Contacts extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class Activity_Inbox extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	Button btnReturn;
 	ListView ContactsList;
@@ -31,6 +32,18 @@ public class Activity_Contacts extends Activity implements LoaderManager.LoaderC
 	//////////////////////////
 	// Create Contacts List //
 	//////////////////////////
+	
+	// Create Inbox box URI
+	Uri inboxURI = Uri.parse("content://sms/inbox");
+	 
+	// List required columns
+	String[] reqCols = new String[] { "_id", "address", "body" };
+	 
+	// Get Content Resolver object, which will deal with Content Provider
+	ContentResolver cr = getContentResolver();
+	 
+	// Fetch Inbox SMS Message from Built-in Content Provider
+	Cursor c = cr.query(inboxURI, reqCols, null, null, null);
 	
 	//This is the Adapter being used to display the list's data
 	SimpleCursorAdapter mAdapter;
@@ -56,11 +69,11 @@ public class Activity_Contacts extends Activity implements LoaderManager.LoaderC
 		progressBar.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
 		        LayoutParams.WRAP_CONTENT, Gravity.CENTER));
 		progressBar.setIndeterminate(true);
-		ContactsList.setEmptyView(findViewById(R.id.loadingScreen));
+		ContactsList.setEmptyView(progressBar);
 		
 		// Must add the progress bar to the root of the layout
-		//ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
-		//root.addView(progressBar);
+		ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
+		root.addView(progressBar);
 		
 		// For the cursor adapter, specify which columns go into which views
 		String[] fromColumns = {ContactsContract.Data.DISPLAY_NAME};

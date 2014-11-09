@@ -10,11 +10,28 @@
         android:layout_height="wrap_content" />
 
     <ListView
-        android:id="@+id/MessagesList"
+        android:id="@+id/ContactsList"
         android:layout_width="match_parent"
         android:layout_height="315dp"
         android:layout_weight="2.02"
-        android:orientation="vertical" />
+        android:orientation="vertical" >
+    </ListView>
+    
+    <FrameLayout
+        android:id="@+id/loadingScreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:layout_weight="198.36" 
+	    android:visibility="gone" >
+
+	    <ProgressBar
+			android:id="@+id/progressBar"
+			style="?android:attr/progressBarStyleLarge"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center" />
+		
+	</FrameLayout>
 
     <Button
         android:id="@+id/btnReturn"
