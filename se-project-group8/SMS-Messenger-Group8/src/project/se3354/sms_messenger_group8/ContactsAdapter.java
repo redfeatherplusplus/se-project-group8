@@ -8,19 +8,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 //import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ContactsAdapter extends ArrayAdapter<MyMessage> {
+public class ContactsAdapter extends ArrayAdapter<MyMessage> implements Filterable {
     private final Context context;
-    private final ArrayList<MyMessage> data;
+    private ArrayList<MyMessage> data;
+    private ArrayList<MyMessage> dataOrigin;
     private final int layoutResourceId;
+    private Filter filter;
 
     public ContactsAdapter(Context context, int layoutResourceId, ArrayList<MyMessage> data) {
         super(context, layoutResourceId, data);
         this.context = context;
         this.data = data;
         this.layoutResourceId = layoutResourceId;
+        this.dataOrigin = new ArrayList<MyMessage>();
+        this.dataOrigin.addAll(data);
     }
 
     @Override
@@ -56,6 +62,66 @@ public class ContactsAdapter extends ArrayAdapter<MyMessage> {
         holder.isDraft.setText(contact.isDraft());
 
         return message;
+    }
+    
+    @Override
+    public Filter getFilter()
+    {
+        if (filter == null)
+            filter = new MessageFilter();
+
+        return filter;
+    }
+    
+    private class MessageFilter extends Filter
+    {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint)
+        {   
+            FilterResults results = new FilterResults();
+            String prefix = constraint.toString().toLowerCase();
+
+            if (prefix == null || prefix.length() == 0)
+            {
+                ArrayList<MyMessage> list = new ArrayList<MyMessage>(dataOrigin);
+                results.values = list;
+                results.count = list.size();
+            }
+            else
+            {
+                final ArrayList<MyMessage> list = new ArrayList<MyMessage>(dataOrigin);
+                final ArrayList<MyMessage> newList = new ArrayList<MyMessage>();
+                int count = list.size();
+
+                for (int i=0; i<count; i++)
+                {
+                    final MyMessage message = list.get(i);
+                    final String value = message.getMessageBody().toLowerCase();
+
+                    if (value.startsWith(prefix))
+                    {
+                    	newList.add(message);
+                    }
+                }
+                results.values = newList;
+                results.count = newList.size();
+            }
+            return results;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            data = (ArrayList<MyMessage>)results.values;
+
+            clear();
+            int count = data.size();
+            for (int i=0; i<count; i++)
+            {
+            	MyMessage message = (MyMessage)data.get(i);
+                add(message);
+            }
+        }
     }
 
     static class ViewHolder

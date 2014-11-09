@@ -9,11 +9,14 @@ import android.app.ActionBar.LayoutParams;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
@@ -34,6 +37,8 @@ public class Activity_Inbox extends Activity {
 	public static final String USERSENT = "2";
 	public static final String RECIEVED = "1";
 	
+	// Search EditText
+    EditText inputSearch;
 	Button btnReturn;
 	ListView messagesList;
 	
@@ -61,7 +66,7 @@ public class Activity_Inbox extends Activity {
 		setContentView(R.layout.activity_inbox);
 		messagesList = (ListView) findViewById(R.id.MessagesList);
 	    btnReturn = (Button) findViewById(R.id.btnReturn);
-	    
+	    inputSearch = (EditText) findViewById(R.id.inputSearch);
 
 		// Create a progress bar to display while the list loads
 	    messagesList.setEmptyView(findViewById(R.id.loadingScreen));
@@ -122,6 +127,28 @@ public class Activity_Inbox extends Activity {
 				//do something
 			}
 		}); 
+
+	    /* Adding search functionality*/
+		inputSearch.addTextChangedListener(new TextWatcher() {
+	        
+	        @Override
+	        public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+	            // When user changed the Text
+	            mAdapter.getFilter().filter(cs.toString());  
+	        }
+	         
+	        @Override
+	        public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+	                int arg3) {
+	            // TODO Auto-generated method stub
+	             
+	        }
+	         
+	        @Override
+	        public void afterTextChanged(Editable arg0) {
+	            // TODO Auto-generated method stub                         
+	        }
+	    });
 		
 	    /* Action when click "Return" button */
 	    btnReturn.setOnClickListener(new View.OnClickListener() {
