@@ -234,10 +234,9 @@ int drawable abc_textfield_searchview_holo_dark 0x7f020053
 int drawable abc_textfield_searchview_holo_light 0x7f020054
 int drawable abc_textfield_searchview_right_holo_dark 0x7f020055
 int drawable abc_textfield_searchview_right_holo_light 0x7f020056
-int drawable ic_contact_picture_2 0x7f020058
-int drawable ic_launcher 0x7f020057
+int drawable ic_contact_picture_2 0x7f020057
+int drawable ic_launcher 0x7f020058
 int id ContactsList 0x7f09003c
-int id Date 0x7f09004f
 int id MessagesList 0x7f090040
 int id action_bar 0x7f09001c
 int id action_bar_activity_content 0x7f090001
@@ -250,7 +249,7 @@ int id action_context_bar 0x7f09001d
 int id action_menu_divider 0x7f090002
 int id action_menu_presenter 0x7f090003
 int id action_mode_close_button 0x7f090024
-int id action_settings 0x7f090050
+int id action_settings 0x7f090051
 int id activity_chooser_view_content 0x7f090025
 int id always 0x7f09000f
 int id beginning 0x7f090016
@@ -265,7 +264,7 @@ int id btnSendSMS 0x7f090045
 int id btnSetAutoReply 0x7f09004b
 int id checkbox 0x7f09002d
 int id collapseActionView 0x7f090010
-int id contactName 0x7f09004e
+int id contactName 0x7f09004f
 int id default_activity_button 0x7f090028
 int id dialog 0x7f090014
 int id disableHome 0x7f090009
@@ -279,10 +278,12 @@ int id homeAsUp 0x7f09000a
 int id icon 0x7f09002a
 int id ifRoom 0x7f090011
 int id image 0x7f090027
+int id isDraft 0x7f090050
 int id listMode 0x7f090006
 int id list_item 0x7f090029
 int id loadingScreen 0x7f09003d
 int id messageBody 0x7f09004d
+int id messageDate 0x7f09004e
 int id middle 0x7f090018
 int id never 0x7f090012
 int id none 0x7f090019

@@ -1,5 +1,10 @@
 package project.se3354.sms_messenger_group8;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+
 import android.app.ActionBar.LayoutParams;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +20,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -22,10 +28,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.widget.Button;
 
-public class Activity_Inbox extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class Activity_Inbox extends Activity {
+	
+	public static final String DRAFT = "3";
+	public static final String USERSENT = "2";
+	public static final String RECIEVED = "1";
 	
 	Button btnReturn;
-	ListView ContactsList;
+	ListView messagesList;
 	
     /* Called when the activity is first created. */
 	
@@ -33,22 +43,8 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	// Create Contacts List //
 	//////////////////////////
 	
-	// Create Inbox box URI
-	Uri inboxURI = Uri.parse("content://sms/inbox");
-	Uri sentURI = Uri.parse("content://sms/sent");
-	Uri draftURI = Uri.parse("content://sms/draft");
-	 
-	// List required columns
-	String[] reqCols = new String[] { "_id", "address", "body" };
-	 
-	// Get Content Resolver object, which will deal with Content Provider
-	ContentResolver cr = getContentResolver();
-	 
-	// Fetch All SMS Messages from Built-in Content Provider
-	Cursor c = cr.query(inboxURI, reqCols, null, null, null);
-	
 	//This is the Adapter being used to display the list's data
-	SimpleCursorAdapter mAdapter;
+	ContactsAdapter mAdapter;
 	
 	// These are the Contacts rows that we will retrieve
 	static final String[] PROJECTION = new String[] {ContactsContract.Data._ID,
@@ -62,42 +58,68 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_contacts);
-	    ContactsList = (ListView) findViewById(R.id.ContactsList);
+		setContentView(R.layout.activity_inbox);
+		messagesList = (ListView) findViewById(R.id.MessagesList);
 	    btnReturn = (Button) findViewById(R.id.btnReturn);
-	
+	    
+
 		// Create a progress bar to display while the list loads
-		ProgressBar progressBar = new ProgressBar(this);
-		progressBar.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
-		        LayoutParams.WRAP_CONTENT, Gravity.CENTER));
-		progressBar.setIndeterminate(true);
-		ContactsList.setEmptyView(progressBar);
-		
-		// Must add the progress bar to the root of the layout
-		ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
-		root.addView(progressBar);
-		
-		// For the cursor adapter, specify which columns go into which views
-		String[] fromColumns = {ContactsContract.Data.DISPLAY_NAME};
-		
-		int[] toViews = {android.R.id.text1}; // The TextView in simple_list_item_1
+	    messagesList.setEmptyView(findViewById(R.id.loadingScreen));
+	    
+	    // Create a uri to get all sms messages
+	    ArrayList<MyMessage> smsList = new ArrayList<MyMessage>();
+	    Uri smsURI = Uri.parse("content://sms");
+	    Cursor c= getContentResolver().query(smsURI, null, null ,null,null);
+	    startManagingCursor(c);
+
+        // Read the sms data and store it in the list
+        if(c.moveToFirst()) {
+        	String messageType;
+            for(int i=0; i < c.getCount(); i++) {
+                MyMessage sms = new MyMessage();
+                messageType = c.getString(c.getColumnIndexOrThrow("type")).toString();
+                if (DRAFT.equals(messageType)) {
+                	// address is null for drafts, because of this we need to find the phone number
+                	// by searching "content://mms-sms/canonical-addresses" with our thread_id
+                	String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id")).toString();
+                	sms.setContactName(getAddressFromThreadID(thread_id));
+                	
+                	// date needs to be formatted from primitive long datatype
+                	String messageDate = SimplifyDate(c.getLong(c.getColumnIndexOrThrow("date")));
+	               	sms.setMessageDate(messageDate);
+                	
+	                sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
+	               	sms.isDraft(true);
+	               	smsList.add(sms);
+                } 
+                else {
+	                sms.setContactName(c.getString(c.getColumnIndexOrThrow("address")).toString());
+	                
+	                // date needs to be formatted from primitive long datatype
+                	String messageDate = SimplifyDate(c.getLong(c.getColumnIndexOrThrow("date")));
+	               	sms.setMessageDate(messageDate);
+	               	
+                	sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
+	               	smsList.add(sms);
+                }
+
+               	c.moveToNext();
+           	}
+       	}
+       	c.close();
 		
 		// Create an empty adapter we will use to display the loaded data.
 		// We pass null for the cursor, then update it in onLoadFinished()
-		mAdapter = new SimpleCursorAdapter(this, 
-		        android.R.layout.simple_list_item_1, null,
-		        fromColumns, toViews, 0);
-		ContactsList.setAdapter(mAdapter);
+		mAdapter = new ContactsAdapter(Activity_Inbox.this, 
+				R.layout.message_layout, smsList);
+		messagesList.setAdapter(mAdapter);
 		
 		/* Action when click on Contact Item */
-		ContactsList.setOnItemClickListener(new OnItemClickListener() {
+		messagesList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				Cursor Contact = (Cursor) parent.getItemAtPosition(position);
-                Toast.makeText(getApplicationContext(), 
-                		Contact.getString(1) + " doesn't like you.", 
-                		Toast.LENGTH_LONG).show();
+				//do something
 			}
 		}); 
 		
@@ -109,42 +131,57 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	            finish();
 	        }
 	    });
-	    
-	    /* Action when click "Return" button */
-	    btnReturn.setOnClickListener(new View.OnClickListener() {
-	        public void onClick(View v) {
-	            Intent intent = new Intent();
-	            setResult(RESULT_OK, intent);
-	            finish();
-	        }
-	    });
 		
-		// Prepare the loader.  Either re-connect with an existing one,
-		// or start a new one.
-		getLoaderManager().initLoader(0, null, this);
 	}
 	
-	// Called when a new Loader needs to be created
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-	// Now create and return a CursorLoader that will take care of
-	// creating a Cursor for the data being displayed.
-	return new CursorLoader(this, ContactsContract.Data.CONTENT_URI,
-	        PROJECTION, SELECTION, null, null);
-	}
+	public String getAddressFromThreadID(String thread_id)
+    {
+		String address = "No Phone Number";
+		
+		// Create a URI to look for the matching _id
+	    Uri conversationURI = Uri.parse("content://mms-sms/canonical-addresses");
+	    Cursor cr = getContentResolver().query(conversationURI, null, null ,null,null);
+	    startManagingCursor(cr);
+
+        // Read the conversation data until a matching _id is found
+        if(cr.moveToFirst()) {
+            for(int i=0; i < cr.getCount(); i++) {
+                MyMessage sms = new MyMessage();
+                String conversation_id = cr.getString(cr.getColumnIndexOrThrow("_id")).toString();
+                
+                if (conversation_id.equals(thread_id)) {
+                	// address may be a string of multiple recipients seperated by spaces
+                	String recipient_ids = cr.getString(cr.getColumnIndexOrThrow("address")).toString();
+                	String[] recipients = recipient_ids.split(" ");
+                	System.out.println("Test");
+                	System.out.println(recipient_ids);
+                	
+                	// assume we want the first recipient
+        			address = recipients[0];
+	                break;
+                } 
+                
+               	cr.moveToNext();
+           	}
+       	}
+       	cr.close();
+       	
+       	return (address);
+    }
 	
-	// Called when a previously created loader has finished loading
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-	// Swap the new cursor in.  (The framework will take care of closing the
-	// old cursor once we return.)
-	mAdapter.swapCursor(data);
-	}
-	
-	// Called when a previously created loader is reset, making the data unavailable
-	public void onLoaderReset(Loader<Cursor> loader) {
-	// This is called when the last Cursor provided to onLoadFinished()
-	// above is about to be closed.  We need to make sure we are no
-	// longer using it.
-	mAdapter.swapCursor(null);
-	}
-	
+	public String SimplifyDate(Long Date)
+    {
+		String SimpleDate = "Feb 30";
+		SimpleDateFormat month_day = new SimpleDateFormat("LLL W");
+		SimpleDateFormat time_xm = new SimpleDateFormat("h:m a");
+		Date currentDate = new Date();
+		Date messageDate = new Date(Date);
+		
+		// if the message was sent today, return the exact time it was sent
+		if (month_day.format(messageDate).equals(month_day.format(currentDate))) {
+			return (time_xm.format(messageDate));
+		}
+		
+		return(month_day.format(messageDate));
+    }
 }
