@@ -35,9 +35,11 @@ public class Activity_Receiver extends BroadcastReceiver
             /*Write newly received message in the TextView box*/
             MainActivity addRev=new MainActivity();
             addRev.txtReceive.setText(smsString);
-
         } 
         
+        /* tell the inbox it needs to update */
+        Intent update = new Intent("Inbox.updateActivity");
+        context.sendBroadcast(update);
 
     }
 

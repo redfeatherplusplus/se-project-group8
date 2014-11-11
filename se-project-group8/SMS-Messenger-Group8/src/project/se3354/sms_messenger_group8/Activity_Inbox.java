@@ -22,9 +22,11 @@ import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import android.app.LoaderManager;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.app.Activity;
@@ -49,7 +51,8 @@ public class Activity_Inbox extends Activity {
 	//////////////////////////
 	
 	//This is the Adapter being used to display the list's data
-	public static ContactsAdapter mAdapter;
+	private ContactsAdapter mAdapter;
+	private ArrayList<MyMessage> smsList;
 	
 	// These are the Contacts rows that we will retrieve
 	static final String[] PROJECTION = new String[] {ContactsContract.Data._ID,
@@ -67,12 +70,82 @@ public class Activity_Inbox extends Activity {
 		messagesList = (ListView) findViewById(R.id.MessagesList);
 	    btnReturn = (Button) findViewById(R.id.btnReturn);
 	    inputSearch = (EditText) findViewById(R.id.inputSearch);
-
+	    
 		// Create a progress bar to display while the list loads
 	    messagesList.setEmptyView(findViewById(R.id.loadingScreen));
 	    
-	    // Create a uri to get all sms messages
-	    ArrayList<MyMessage> smsList = new ArrayList<MyMessage>();
+	    // fill the list with sms messages
+	    smsList = new ArrayList<MyMessage>();
+	    smsListGenerate();
+	    
+	    // Create a receiver to update the inbox
+	    IntentFilter filterState = new IntentFilter("Inbox.updateActivity");
+	    registerReceiver(new BroadcastReceiver(){
+	        public void onReceive(Context context, Intent intent) {
+	        	// update the inbox, save searchbox during update
+		        String SearchBox = inputSearch.getText().toString();
+	            mAdapter.clear();
+	            smsListGenerate();
+	            
+	            // create a new message filter since the database changed
+	            mAdapter = new ContactsAdapter(Activity_Inbox.this, 
+	    				R.layout.message_layout, smsList);
+	            mAdapter.notifyDataSetChanged();
+	    		messagesList.setAdapter(mAdapter);
+		        inputSearch.setText(SearchBox);
+	        }
+	    }, filterState);
+		
+		// Create an empty adapter we will use to display the loaded data.
+		// We pass null for the cursor, then update it in onLoadFinished()
+		mAdapter = new ContactsAdapter(Activity_Inbox.this, 
+				R.layout.message_layout, smsList);
+		messagesList.setAdapter(mAdapter);
+		
+		/* Action when click on Contact Item */
+		messagesList.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				//do something
+			}
+		}); 
+
+	    /* Adding search functionality*/
+		inputSearch.addTextChangedListener(new TextWatcher() {
+	        
+	        @Override
+	        public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+	            // When user changed the Text
+	            mAdapter.getFilter().filter(cs.toString()); 
+	        }
+	         
+	        @Override
+	        public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+	                int arg3) {
+	            // TODO Auto-generated method stub
+	             
+	        }
+	         
+	        @Override
+	        public void afterTextChanged(Editable arg0) {
+	            // TODO Auto-generated method stub                         
+	        }
+	    });
+		
+	    /* Action when click "Return" button */
+	    btnReturn.setOnClickListener(new View.OnClickListener() {
+	        public void onClick(View v) {
+	            Intent intent = new Intent();
+	            setResult(RESULT_OK, intent);
+	            finish();
+	        }
+	    });
+		
+	}
+	
+	public void smsListGenerate() {
+		// Create a uri to get all sms messages
 	    Uri smsURI = Uri.parse("content://sms");
 	    Cursor c= getContentResolver().query(smsURI, null, null ,null,null);
 	    startManagingCursor(c);
@@ -107,58 +180,10 @@ public class Activity_Inbox extends Activity {
                 	sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
 	               	smsList.add(sms);
                 }
-
                	c.moveToNext();
            	}
        	}
        	c.close();
-		
-		// Create an empty adapter we will use to display the loaded data.
-		// We pass null for the cursor, then update it in onLoadFinished()
-		mAdapter = new ContactsAdapter(Activity_Inbox.this, 
-				R.layout.message_layout, smsList);
-		messagesList.setAdapter(mAdapter);
-		
-		/* Action when click on Contact Item */
-		messagesList.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				//do something
-			}
-		}); 
-
-	    /* Adding search functionality*/
-		inputSearch.addTextChangedListener(new TextWatcher() {
-	        
-	        @Override
-	        public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-	            // When user changed the Text
-	            mAdapter.getFilter().filter(cs.toString());  
-	        }
-	         
-	        @Override
-	        public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-	                int arg3) {
-	            // TODO Auto-generated method stub
-	             
-	        }
-	         
-	        @Override
-	        public void afterTextChanged(Editable arg0) {
-	            // TODO Auto-generated method stub                         
-	        }
-	    });
-		
-	    /* Action when click "Return" button */
-	    btnReturn.setOnClickListener(new View.OnClickListener() {
-	        public void onClick(View v) {
-	            Intent intent = new Intent();
-	            setResult(RESULT_OK, intent);
-	            finish();
-	        }
-	    });
-		
 	}
 	
 	public String getAddressFromThreadID(String thread_id)
