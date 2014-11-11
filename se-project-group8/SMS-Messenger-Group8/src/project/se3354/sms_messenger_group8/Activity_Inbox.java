@@ -49,7 +49,7 @@ public class Activity_Inbox extends Activity {
 	//////////////////////////
 	
 	//This is the Adapter being used to display the list's data
-	ContactsAdapter mAdapter;
+	public static ContactsAdapter mAdapter;
 	
 	// These are the Contacts rows that we will retrieve
 	static final String[] PROJECTION = new String[] {ContactsContract.Data._ID,
@@ -177,14 +177,9 @@ public class Activity_Inbox extends Activity {
                 String conversation_id = cr.getString(cr.getColumnIndexOrThrow("_id")).toString();
                 
                 if (conversation_id.equals(thread_id)) {
-                	// address may be a string of multiple recipients seperated by spaces
+                	// warning: address may be a string of multiple recipients seperated by spaces
                 	String recipient_ids = cr.getString(cr.getColumnIndexOrThrow("address")).toString();
-                	String[] recipients = recipient_ids.split(" ");
-                	System.out.println("Test");
-                	System.out.println(recipient_ids);
-                	
-                	// assume we want the first recipient
-        			address = recipients[0];
+        			address = recipient_ids;
 	                break;
                 } 
                 
@@ -200,7 +195,7 @@ public class Activity_Inbox extends Activity {
     {
 		String SimpleDate = "Feb 30";
 		SimpleDateFormat month_day = new SimpleDateFormat("LLL W");
-		SimpleDateFormat time_xm = new SimpleDateFormat("h:m a");
+		SimpleDateFormat time_xm = new SimpleDateFormat("h:mm a");
 		Date currentDate = new Date();
 		Date messageDate = new Date(Date);
 		
