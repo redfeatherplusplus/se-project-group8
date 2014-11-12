@@ -10,20 +10,27 @@ import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.TextView; 
+import android.widget.ToggleButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class MainActivity extends Activity 
 {
-	Button btnFindContactNo;
+		Button btnFindContactNo;
 	Button btnSendSMS;
 	Button btnScheduleSend;
 	Button btnInbox;
 	EditText txtPhoneNo;
 	EditText txtMessage;
+	EditText txtAutoReply;
+	ToggleButton toggleBtnAutoReply;
 	
 	static TextView txtReceive;
+	
+	public static int autoReplyOn=0;
 
     /* Called when the activity is first created. */
     @Override
@@ -31,7 +38,8 @@ public class MainActivity extends Activity
     {   
     	
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);       
+        setContentView(R.layout.activity_main);
+        
         
         btnFindContactNo = (Button) findViewById(R.id.btnFindContactNo); 
         btnSendSMS = (Button) findViewById(R.id.btnSendSMS);
@@ -42,6 +50,9 @@ public class MainActivity extends Activity
         txtMessage = (EditText) findViewById(R.id.txtMessage);
         
         txtReceive=(TextView)findViewById(R.id.txtReceive); //TextView box for newest message
+        
+        txtAutoReply = (EditText) findViewById(R.id.txtAutoReply);
+        toggleBtnAutoReply = (ToggleButton) findViewById(R.id.toggleBtnAutoReply); // Auto_Reply button
         
     
         /* Action when click "From Contacts" button */             
@@ -108,24 +119,39 @@ public class MainActivity extends Activity
                 startActivityForResult(myIntent, 0);
             }
         });
+        
+        toggleBtnAutoReply.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                	Toast.makeText(getApplicationContext(), "Auto_Reply ON",
+                    		Toast.LENGTH_SHORT).show();
+                	autoReplyOn=1; 
+                } else {
+                	Toast.makeText(getApplicationContext(), "Auto_Reply OFF",
+                    		Toast.LENGTH_SHORT).show();
+                	autoReplyOn=0;
+                }
+            }
+        });
 
     }
     
     /* Method of sending a message to another device */
-    private void sendSMS(String phoneNumber, String message)
+    public void sendSMS(String phoneNumber, String message)
     {      	
         // Send SMS, and write in bottom TextView box
         try {
-            SmsManager sms = SmsManager.getDefault();
-            sms.sendTextMessage(phoneNumber, null, message, null, null);
+            SmsManager sms = SmsManager.getDefault();           
+            sms.sendTextMessage(phoneNumber, null, message, PendingIntent.getBroadcast(
+                    this, 0, new Intent("SMS_SENT"), 0), null);
             Toast.makeText(getApplicationContext(), "SMS Sent",
-            		Toast.LENGTH_LONG).show();
+            		Toast.LENGTH_SHORT).show();
             txtReceive.setText("SMS sent to "+phoneNumber+" :"+"\n"+message+"\n");
          } 
-        // Not sure how to test it
+        // Not sure how to test exception
         catch (Exception e) {
             Toast.makeText(getApplicationContext(),
-            "SMS faild",
+            "SMS failed",
             	Toast.LENGTH_LONG).show();
             txtReceive.setText("SMS sent to "+phoneNumber+" :"+"\n"+message+"\n"+" !!!SMS failed");
             e.printStackTrace();
