@@ -85,15 +85,21 @@
 	    <TextView  
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content" 
-	        android:text="Search Message"
+	        android:text="Auto Reply Message"
 	        />
-	
-	    <Button
-	        android:id="@+id/btnSearchName"
-	        android:layout_width="wrap_content"
+		<EditText 
+	        android:id="@+id/txtAutoReply"  
+	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-	        android:text="Search Name" />
+	        android:text="I am not available."        
+	        />
+	    <ToggleButton
+	        android:id="@+id/toggleBtnAutoReply"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="ToggleButton"
+	        android:textOff="Auto_Reply is off"
+	        android:textOn="Auto_Reply is on" />
 	
 	    <EditText 
 	        android:id="@+id/txtContacts"  
@@ -139,7 +145,7 @@
 	        <TextView
 	            android:id="@+id/txtReceive"
 	            android:layout_width="fill_parent"
-	            android:layout_height="200px" />
+	            android:layout_height="wrap_content" />
 	    
 	</LinearLayout>
 </ScrollView>
