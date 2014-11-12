@@ -91,11 +91,12 @@ public class MainActivity extends Activity
         });
         
                 
-        /* Action when click "Send Later" button */             
+        /* Action when click "Go to Conversation" button */             
         btnScheduleSend.setOnClickListener(new View.OnClickListener() 
         {
-            public void onClick(View v) { 
-            	//do stuff
+        	public void onClick(View v) { 
+            	Intent myIntent = new Intent(v.getContext(), Activity_Conversation.class);
+                startActivityForResult(myIntent, 0);
             }
         });
         

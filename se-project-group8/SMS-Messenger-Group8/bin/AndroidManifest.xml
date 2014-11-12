@@ -32,7 +32,6 @@
         <activity android:name=".Activity_Inbox"></activity>
         <activity android:name=".Activity_Contacts"></activity>
         <activity android:name=".Activity_Conversation"></activity>
-        
             <receiver android:name=".Activity_Receiver"> 
             <intent-filter> 
                 <action android:name=
