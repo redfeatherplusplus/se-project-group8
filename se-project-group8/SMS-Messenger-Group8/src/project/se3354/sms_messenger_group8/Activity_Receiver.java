@@ -24,14 +24,12 @@ public class Activity_Receiver extends BroadcastReceiver
             Object[] pdus = (Object[]) bundle.get("pdus");
             msgs = new SmsMessage[pdus.length];            
             for (int i=0; i<msgs.length; i++){
-                msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]);                
-                smsString += "SMS from " + msgs[i].getOriginatingAddress();                     
-                smsString += " : ";
-                smsString += msgs[i].getMessageBody().toString();
-                smsString += "\n";        
+            	msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]);                
+                smsString += "SMS from " + msgs[i].getOriginatingAddress()+" : "+"\n";                     
+                smsString +=msgs[i].getMessageBody().toString()+"\n";     
             }
             /* display the new message */
-            Toast.makeText(context, smsString, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "SMS Received", Toast.LENGTH_LONG).show();
             /*Write newly received message in the TextView box*/
             MainActivity addRev=new MainActivity();
             addRev.txtReceive.setText(smsString);

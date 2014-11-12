@@ -43,20 +43,7 @@ public class MainActivity extends Activity
         
         txtReceive=(TextView)findViewById(R.id.txtReceive); //TextView box for newest message
         
-        /*------built-in intent method is hidden here----------
-        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-        sendIntent.putExtra("sms_body", "Put your message here"); 
-        sendIntent.setType("vnd.android-dir/mms-sms");
-        try {
-        startActivity(sendIntent);
-        finish();
-        } 
-        catch (android.content.ActivityNotFoundException ex) {
-        Toast.makeText(MainActivity.this, 
-        "Sending message faild", Toast.LENGTH_SHORT).show();
-        }      
-        You can try it to see how easy it will be-------------------------*/
-        
+    
         /* Action when click "From Contacts" button */             
         btnFindContactNo.setOnClickListener(new View.OnClickListener() 
         {
@@ -78,7 +65,7 @@ public class MainActivity extends Activity
                 if (phoneNo.length()>0 && message.length()>0) {               
                     sendSMS(phoneNo, message);
                     /*Write newly sent message in the TextView box*/
-                    txtReceive.setText("SMS sent to "+phoneNo+" : "+message);
+                    //txtReceive.setText("SMS sent to "+phoneNo+" : "+message);
                     
                     //Clear phone number box and message box after Sending
                     txtPhoneNo.setText(null);
@@ -125,70 +112,23 @@ public class MainActivity extends Activity
     
     /* Method of sending a message to another device */
     private void sendSMS(String phoneNumber, String message)
-    {      
-    	String SENT = "SMS_SENT";
-    	String DELIVERED = "SMS_DELIVERED";
-    	
-        PendingIntent sentPI = PendingIntent.getBroadcast(this, 0,
-            new Intent(SENT), 0);
-        
-        PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0,
-            new Intent(DELIVERED), 0);
-    	
-        /* Results report after sending */
-        /* Making reports, don't need to read between lines. 
-         * And I may re-write it later, because I found better examples from other sources.
-         ---------------------------------------------------------------------------------------*/
-        registerReceiver(new BroadcastReceiver(){
-			@Override
-			public void onReceive(Context arg0, Intent arg1) {
-				switch (getResultCode())
-				{
-				    case Activity.RESULT_OK:
-					    Toast.makeText(getBaseContext(), "SMS sent", 
-					    		Toast.LENGTH_SHORT).show();
-					    break;
-				    case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-					    Toast.makeText(getBaseContext(), "Generic failure", 
-					    		Toast.LENGTH_SHORT).show();
-					    break;
-				    case SmsManager.RESULT_ERROR_NO_SERVICE:
-					    Toast.makeText(getBaseContext(), "No service", 
-					    		Toast.LENGTH_SHORT).show();
-					    break;
-				    case SmsManager.RESULT_ERROR_NULL_PDU:
-					    Toast.makeText(getBaseContext(), "Null PDU", 
-					    		Toast.LENGTH_SHORT).show();
-					    break;
-				    case SmsManager.RESULT_ERROR_RADIO_OFF:
-					    Toast.makeText(getBaseContext(), "Radio off", 
-					    		Toast.LENGTH_SHORT).show();
-					    break;
-				}
-			}
-        }, new IntentFilter(SENT));
-        
-        /*Results report after delivery*/
-        registerReceiver(new BroadcastReceiver(){
-			@Override
-			public void onReceive(Context arg0, Intent arg1) {
-				switch (getResultCode())
-				{
-				    case Activity.RESULT_OK:
-					    Toast.makeText(getBaseContext(), "SMS delivered", 
-					    		Toast.LENGTH_SHORT).show();
-					    break;
-				    case Activity.RESULT_CANCELED:
-					    Toast.makeText(getBaseContext(), "SMS not delivered", 
-					    		Toast.LENGTH_SHORT).show();
-					    break;					    
-				}
-			}
-        }, new IntentFilter(DELIVERED));        
-    	/*------------------------------------------------------------------------------*/
-        
-        SmsManager sms = SmsManager.getDefault();
-        sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);               
+    {      	
+        // Send SMS, and write in bottom TextView box
+        try {
+            SmsManager sms = SmsManager.getDefault();
+            sms.sendTextMessage(phoneNumber, null, message, null, null);
+            Toast.makeText(getApplicationContext(), "SMS Sent",
+            		Toast.LENGTH_LONG).show();
+            txtReceive.setText("SMS sent to "+phoneNumber+" :"+"\n"+message+"\n");
+         } 
+        // Not sure how to test it
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(),
+            "SMS faild",
+            	Toast.LENGTH_LONG).show();
+            txtReceive.setText("SMS sent to "+phoneNumber+" :"+"\n"+message+"\n"+" !!!SMS failed");
+            e.printStackTrace();
+         }
     }
    
 
