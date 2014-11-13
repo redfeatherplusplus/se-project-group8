@@ -16,7 +16,7 @@ public class Activity_Receiver extends BroadcastReceiver
 {        
 	private static String PhoneNoRec = "";
     private static String MessageRec = "";
-    //private constant 
+    private static String oldSMS = ""; 
 	 
     @Override
     public void onReceive(Context context, Intent intent) 
@@ -25,9 +25,8 @@ public class Activity_Receiver extends BroadcastReceiver
         Bundle bundle = intent.getExtras();        
         SmsMessage[] msgs = null;
         String smsString = "";  
-        String oldSMS = "";
-        int j=0;
-        
+ 
+                
         
         if (bundle != null)
         {
@@ -50,20 +49,15 @@ public class Activity_Receiver extends BroadcastReceiver
             activity1st.txtReceive.setText(smsString);
             
             //Autoreply: if Auto_Reply button is on, reply "I am not available"
-            if (activity1st.autoReplyOn==1){
-            	// if two devices have "Auto_Reply" on, they will reply each other 2 times
-            	if (j<2){
-            		if (PhoneNoRec.equals(oldSMS)){
-            			j+=1;
-            		}else{
-            			j=0;
-            		}
+            if (activity1st.autoReplyOn==1 & !PhoneNoRec.equals(oldSMS)){
+            	// if two devices have "Auto_Reply" on, they will reply each other only once
+            	            			     		   		
 	            	SmsManager sms = SmsManager.getDefault();
 	            	String ar = MainActivity.txtAutoReply.getText().toString();
-	            	sms.sendTextMessage(PhoneNoRec, null, ar, null, null);
 	            	oldSMS=PhoneNoRec;
+	            	sms.sendTextMessage(PhoneNoRec, null, ar, null, null);          	
 	            	
-            	}
+            	
             }
         } 
         
