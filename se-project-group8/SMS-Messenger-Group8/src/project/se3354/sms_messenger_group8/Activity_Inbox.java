@@ -108,10 +108,11 @@ public class Activity_Inbox extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				//display conversation for that address
-				Intent displayConv = new Intent(Activity_Inbox.this, Activity_Conversation.class);
+				Intent displayConv = new Intent(view.getContext(), Activity_Conversation.class);
 				String convAddress = smsList.get(position).getContactName();
                 displayConv.putExtra("convAddress", convAddress);
 				startActivity(displayConv);
+				finish();
 			}
 		}); 
 

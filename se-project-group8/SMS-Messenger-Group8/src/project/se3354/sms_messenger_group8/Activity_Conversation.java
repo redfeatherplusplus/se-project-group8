@@ -123,11 +123,11 @@ public class Activity_Conversation extends Activity {
             for(int i=0; i < c.getCount(); i++) {
                 MyMessage sms = new MyMessage();	//Create new message to be populated
                 //Create variable to store address of current message being queried
-                String address = (c.getString(c.getColumnIndexOrThrow("address")).toString());		
+                //String address = (c.getString(c.getColumnIndexOrThrow("address")).toString());		
                 messageType = c.getString(c.getColumnIndexOrThrow("type")).toString();
                 
-                //This means drafts will be included in conversation view. Not sure if we should change.
-                if (DRAFT.equals(messageType) && address.equals(convAddress)) {
+                //create an sms with properly filled datafields
+                if (DRAFT.equals(messageType)) {
                 	// address is null for drafts, because of this we need to find the phone number
                 	// by searching "content://mms-sms/canonical-addresses" with our thread_id
                 	String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id")).toString();
@@ -140,10 +140,8 @@ public class Activity_Conversation extends Activity {
 	                sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
 	                sms.setMessageType(messageType);
 	               	sms.isDraft(true);
-	               	smsList.add(sms);
                 } 
-                //Add sent messages from user conversation to smsList
-                else if (address.equals(convAddress)) {
+                else {
                 	sms.setContactName(c.getString(c.getColumnIndexOrThrow("address")).toString());
 	                
 	                // date needs to be formatted from primitive long datatype
@@ -152,7 +150,11 @@ public class Activity_Conversation extends Activity {
 	               	
                 	sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
 	                sms.setMessageType(messageType);
-	               	smsList.add(sms);
+                }
+                //only add message if address is convAddress.
+                if (sms.getContactName().equals(convAddress))
+                {
+                	smsList.add(sms);
                 }
                 
                	c.moveToNext();
