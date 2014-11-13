@@ -3,9 +3,11 @@ package project.se3354.sms_messenger_group8;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.view.View;
@@ -29,6 +31,8 @@ public class MainActivity extends Activity
 	Button btnFindContactNo;
 	Button btnSendSMS;
 	Button btnScheduleSend;
+	Button btnSaveDraft;
+	Button btnOpenDraft;
 	Button btnInbox;
 	EditText txtMessage;
 	ToggleButton toggleBtnAutoReply;
@@ -50,6 +54,8 @@ public class MainActivity extends Activity
         btnSendSMS = (Button) findViewById(R.id.btnSendSMS);
         btnScheduleSend = (Button) findViewById(R.id.btnScheduleSend);
         btnInbox = (Button) findViewById(R.id.btnInbox);
+        btnSaveDraft = (Button) findViewById(R.id.btnSaveDraft);
+        btnOpenDraft = (Button) findViewById(R.id.btnOpenDraft);
         
         txtPhoneNo = (EditText) findViewById(R.id.txtPhoneNo);
         txtMessage = (EditText) findViewById(R.id.txtMessage);
@@ -107,12 +113,36 @@ public class MainActivity extends Activity
         });
         
                 
-        /* Action when click "Go to Conversation" button */             
-        btnScheduleSend.setOnClickListener(new View.OnClickListener() 
+        /* Action when click "Save Draft" button */             
+        btnSaveDraft.setOnClickListener(new View.OnClickListener() 
         {
         	public void onClick(View v) { 
-            	Intent myIntent = new Intent(v.getContext(), Activity_Conversation.class);
-                startActivityForResult(myIntent, 0);
+        		ContentValues values = new ContentValues();
+        		String phoneNo = txtPhoneNo.getText().toString();
+            	String message = txtMessage.getText().toString();
+            	//phone number has to be there before saving draft
+            	if (phoneNo.length()>0) {               
+            		Date resultdate = new Date(System.currentTimeMillis());
+                    /*Write newly sent message in the TextView box*/
+                    txtReceive.setText("Saved draft SMS want sent to "+phoneNo+" : "
+                    		+"\n"+message+"\n"+resultdate);
+                    
+                    //Clear phone number box and message box after Sending
+                    txtPhoneNo.setText(null);
+                    txtMessage.setText(null);
+                    
+	            	values.put("address", phoneNo);
+	        		values.put("body", message);
+	        		values.put("date", String.valueOf(System.currentTimeMillis())); 
+	        		values.put("type", "3");
+	        		values.put("thread_id", "0"); 
+	        		getContentResolver().insert(Uri.parse("content://sms/draft"), values);
+            	}
+            	//phone number has to be there, if not, report error
+            	else {
+                	Toast.makeText(getBaseContext(), "Phone number cannot be empty", 
+                        Toast.LENGTH_LONG).show();
+                }
             }
         });
         
