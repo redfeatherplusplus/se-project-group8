@@ -46,12 +46,16 @@ public class Activity_Conversation extends Activity {
 	
 	//Create String Value of the Phone Number of other Person in Conversation
 	private String convAddress;
+	private String contactName;
 	    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//get data from inbox
 		convAddress = getIntent().getStringExtra("convAddress");
+		
+		//get name of contact if it exists
+    	contactName = getContactName(convAddress);
 		
 		// match views with their xml ids
 		setContentView(R.layout.activity_conversation);
@@ -155,8 +159,8 @@ public class Activity_Conversation extends Activity {
                 //only add message if address is convAddress.
                 if (sms.getPhoneNumber().equals(convAddress))
                 {
-                	//replace phone number with contact name if possible
-                	sms.setContactName(getContactName(sms.getPhoneNumber()));
+                	//replace phone number with contact name
+                	sms.setContactName(contactName);
                 	smsList.add(sms);
                 }
                 
@@ -205,7 +209,8 @@ public class Activity_Conversation extends Activity {
         	String ContactName = cs.getString(cs.getColumnIndex(PhoneLookup.DISPLAY_NAME));
         	return (ContactName);
         } 
-        
+
+        cs.close();
         return(address);
 	}
 	

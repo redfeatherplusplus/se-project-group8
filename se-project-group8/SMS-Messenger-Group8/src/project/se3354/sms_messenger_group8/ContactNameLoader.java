@@ -68,6 +68,7 @@ public final class ContactNameLoader extends AsyncTaskLoader<ArrayList<MyMessage
         	return (ContactName);
         } 
         
+        cs.close();
         return(address);
 	}
 }

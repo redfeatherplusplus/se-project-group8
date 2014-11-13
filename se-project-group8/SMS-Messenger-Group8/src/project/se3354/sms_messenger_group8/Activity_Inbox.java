@@ -238,7 +238,8 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
         	String ContactName = cs.getString(cs.getColumnIndex(PhoneLookup.DISPLAY_NAME));
         	return (ContactName);
         } 
-        
+
+        cs.close();
         return(address);
 	}
 	
