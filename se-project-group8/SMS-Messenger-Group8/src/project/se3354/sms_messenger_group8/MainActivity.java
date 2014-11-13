@@ -21,12 +21,12 @@ public class MainActivity extends Activity
 {
 
 	public static EditText txtAutoReply;
+	public static EditText txtPhoneNo;
 	
 	Button btnFindContactNo;
 	Button btnSendSMS;
 	Button btnScheduleSend;
 	Button btnInbox;
-	EditText txtPhoneNo;
 	EditText txtMessage;
 	ToggleButton toggleBtnAutoReply;
 	

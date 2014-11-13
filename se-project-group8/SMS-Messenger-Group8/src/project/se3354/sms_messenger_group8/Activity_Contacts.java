@@ -22,6 +22,9 @@ import android.content.Intent;
 import android.widget.Button;
 
 public class Activity_Contacts extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+	public static final String NO_NUMBER = "0";
+	public static final String HAS_NUMBER = "1";
 	
 	Button btnReturn;
 	ListView ContactsList;
@@ -37,12 +40,22 @@ public class Activity_Contacts extends Activity implements LoaderManager.LoaderC
 	
 	// These are the Contacts rows that we will retrieve
 	static final String[] PROJECTION = new String[] {ContactsContract.Data._ID,
-	    ContactsContract.Data.DISPLAY_NAME};
+	    ContactsContract.Data.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER,
+	    ContactsContract.Data.HAS_PHONE_NUMBER, ContactsContract.Data.IS_PRIMARY};
 	
-	// This is the select criteria
+	// This is the select criteria it is very complicated,
+	// someone decided to set Phone.NUMBER to DISPLAY_NAME if a contact doesn't have a number
 	static final String SELECTION = "((" + 
 	    ContactsContract.Data.DISPLAY_NAME + " NOTNULL) AND (" +
-	    ContactsContract.Data.DISPLAY_NAME + " != '' ))";
+	    ContactsContract.Data.DISPLAY_NAME + " != '' ) AND ((" +
+	    ContactsContract.Data.DISPLAY_NAME + " != " + ContactsContract.CommonDataKinds.Phone.NUMBER + ") OR (" +
+	    ContactsContract.Data.HAS_PHONE_NUMBER + " LIKE ?)) AND (" +
+	    ContactsContract.Data.IS_PRIMARY + " LIKE ?))";
+
+    // Defines a variable for the search string
+    private String mSearchString = "0";
+    // Defines the array to hold values that replace the ?
+    private String[] mSelectionArgs = { mSearchString, mSearchString };
 	    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -76,21 +89,25 @@ public class Activity_Contacts extends Activity implements LoaderManager.LoaderC
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Cursor Contact = (Cursor) parent.getItemAtPosition(position);
-                Toast.makeText(getApplicationContext(), 
-                		Contact.getString(1) + " doesn't like you.", 
-                		Toast.LENGTH_LONG).show();
+				//see if the user has a phone number
+				String hasNumber = Contact.getString(3);
+				if(hasNumber.equals(NO_NUMBER)) {
+					//say user does not have a number if they do not
+					Toast.makeText(getApplicationContext(), 
+	                		Contact.getString(1) + " doesn't have a phone number.", 
+	                		Toast.LENGTH_LONG).show();
+				}
+				else {
+					//get phone number which is at index 2 of PROJECTION
+					String phoneNumber = Contact.getString(2); 
+					
+					//set text to be the phoneNumber and return to MainActvity
+					MainActivity.txtPhoneNo.setText(phoneNumber);
+	                finish();
+				}
 			}
 		}); 
 		
-	    /* Action when click "Return" button */
-	    btnReturn.setOnClickListener(new View.OnClickListener() {
-	        public void onClick(View v) {
-	            Intent intent = new Intent();
-	            setResult(RESULT_OK, intent);
-	            finish();
-	        }
-	    });
-	    
 	    /* Action when click "Return" button */
 	    btnReturn.setOnClickListener(new View.OnClickListener() {
 	        public void onClick(View v) {
@@ -110,7 +127,7 @@ public class Activity_Contacts extends Activity implements LoaderManager.LoaderC
 	// Now create and return a CursorLoader that will take care of
 	// creating a Cursor for the data being displayed.
 	return new CursorLoader(this, ContactsContract.Data.CONTENT_URI,
-	        PROJECTION, SELECTION, null, null);
+	        PROJECTION, SELECTION, mSelectionArgs, null);
 	}
 	
 	// Called when a previously created loader has finished loading
