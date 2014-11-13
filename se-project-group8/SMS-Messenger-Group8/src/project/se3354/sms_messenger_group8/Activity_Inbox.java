@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -34,7 +35,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.widget.Button;
 
-public class Activity_Inbox extends Activity {
+public class Activity_Inbox extends Activity implements LoaderManager.LoaderCallbacks<ArrayList<MyMessage>>{
 	
 	public static final String DRAFT = "3";
 	public static final String USERSENT = "2";
@@ -52,8 +53,8 @@ public class Activity_Inbox extends Activity {
 	//////////////////////////
 	
 	//This is the Adapter being used to display the list's data
-	private ContactsAdapter mAdapter;
-	private ArrayList<MyMessage> smsList;
+	private ContactsAdapter mAdapter = null;
+	private ArrayList<MyMessage> smsList = null;
 	
 	// These are the Contacts rows that we will retrieve
 	static final String[] PROJECTION = new String[] {ContactsContract.Data._ID,
@@ -147,7 +148,8 @@ public class Activity_Inbox extends Activity {
 	            finish();
 	        }
 	    });
-		
+	    
+		getLoaderManager().initLoader(0, null, this).forceLoad();
 	}
 	
 	public void smsListGenerate() {
@@ -189,8 +191,8 @@ public class Activity_Inbox extends Activity {
                     sms.setMessageType(messageType);
 	               	smsList.add(sms);
                 }
-                //replace phonenumber with contactName
-                sms.setContactName(getContactName(sms.getPhoneNumber()));
+                //display phonenumber while contactName loads
+                sms.setContactName(sms.getPhoneNumber());
                	c.moveToNext();
            	}
        	}
@@ -255,4 +257,23 @@ public class Activity_Inbox extends Activity {
 		
 		return(month_day.format(messageDate));
     }
+
+	@Override
+	public Loader<ArrayList<MyMessage>> onCreateLoader(int id, Bundle args) {
+		// TODO Auto-generated method stub
+		return new ContactNameLoader(this, smsList);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<ArrayList<MyMessage>> loader, ArrayList<MyMessage> data) {
+		// TODO Auto-generated method stub
+        mAdapter.notifyDataSetChanged();
+		
+	}
+
+	@Override
+	public void onLoaderReset(Loader<ArrayList<MyMessage>> loader) {
+		// TODO Auto-generated method stub
+        mAdapter.notifyDataSetChanged();
+	}
 }
