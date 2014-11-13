@@ -19,13 +19,15 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class MainActivity extends Activity 
 {
-		Button btnFindContactNo;
+
+	public static EditText txtAutoReply;
+	
+	Button btnFindContactNo;
 	Button btnSendSMS;
 	Button btnScheduleSend;
 	Button btnInbox;
 	EditText txtPhoneNo;
 	EditText txtMessage;
-	EditText txtAutoReply;
 	ToggleButton toggleBtnAutoReply;
 	
 	static TextView txtReceive;

@@ -59,8 +59,8 @@ public class Activity_Receiver extends BroadcastReceiver
             			j=0;
             		}
 	            	SmsManager sms = SmsManager.getDefault();
-	            	//String ar = activity1st.txtAutoReply.getText().toString();
-	            	sms.sendTextMessage(PhoneNoRec, null, "I am not available", null, null);
+	            	String ar = MainActivity.txtAutoReply.getText().toString();
+	            	sms.sendTextMessage(PhoneNoRec, null, ar, null, null);
 	            	oldSMS=PhoneNoRec;
 	            	
             	}

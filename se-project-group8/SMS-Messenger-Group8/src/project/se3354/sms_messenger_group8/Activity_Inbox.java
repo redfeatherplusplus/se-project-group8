@@ -107,7 +107,11 @@ public class Activity_Inbox extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				//do something
+				//display conversation for that address
+				Intent displayConv = new Intent(Activity_Inbox.this, Activity_Conversation.class);
+				String convAddress = smsList.get(position).getContactName();
+                displayConv.putExtra("convAddress", convAddress);
+				startActivity(displayConv);
 			}
 		}); 
 
@@ -156,6 +160,7 @@ public class Activity_Inbox extends Activity {
             for(int i=0; i < c.getCount(); i++) {
                 MyMessage sms = new MyMessage();
                 messageType = c.getString(c.getColumnIndexOrThrow("type")).toString();
+                
                 if (DRAFT.equals(messageType)) {
                 	// address is null for drafts, because of this we need to find the phone number
                 	// by searching "content://mms-sms/canonical-addresses" with our thread_id
@@ -167,6 +172,7 @@ public class Activity_Inbox extends Activity {
 	               	sms.setMessageDate(messageDate);
                 	
 	                sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
+	                sms.setMessageType(messageType);
 	               	sms.isDraft(true);
 	               	smsList.add(sms);
                 } 
@@ -178,6 +184,7 @@ public class Activity_Inbox extends Activity {
 	               	sms.setMessageDate(messageDate);
 	               	
                 	sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
+                    sms.setMessageType(messageType);
 	               	smsList.add(sms);
                 }
                	c.moveToNext();

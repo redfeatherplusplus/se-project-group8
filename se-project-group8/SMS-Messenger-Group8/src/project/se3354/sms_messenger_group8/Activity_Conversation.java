@@ -43,21 +43,16 @@ public class Activity_Conversation extends Activity {
 	private ContactsAdapter mAdapter;
 	private ArrayList<MyMessage> smsList;
 	
-	// These are the Contacts rows that we will retrieve
-	static final String[] PROJECTION = new String[] {ContactsContract.Data._ID,
-	    ContactsContract.Data.DISPLAY_NAME};
-	
 	//Create String Value of the Phone Number of other Person in Conversation
 	private String convAddress;
-	
-	// This is the select criteria
-	static final String SELECTION = "((" + 
-	    ContactsContract.Data.DISPLAY_NAME + " NOTNULL) AND (" +
-	    ContactsContract.Data.DISPLAY_NAME + " != '' ))";
 	    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//get data from inbox
+		convAddress = getIntent().getStringExtra("convAddress");
+		
+		// match views with their xml ids
 		setContentView(R.layout.activity_conversation);
 		messagesList = (ListView) findViewById(R.id.MessagesList);
 	    btnReturn = (Button) findViewById(R.id.btnReturn);
@@ -99,7 +94,7 @@ public class Activity_Conversation extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				//do something
+				//do something, maybe implement deleting messages?
 			}
 		}); 
 		
@@ -132,7 +127,7 @@ public class Activity_Conversation extends Activity {
                 messageType = c.getString(c.getColumnIndexOrThrow("type")).toString();
                 
                 //This means drafts will be included in conversation view. Not sure if we should change.
-                if (DRAFT.equals(messageType)) {
+                if (DRAFT.equals(messageType) && address.equals(convAddress)) {
                 	// address is null for drafts, because of this we need to find the phone number
                 	// by searching "content://mms-sms/canonical-addresses" with our thread_id
                 	String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id")).toString();
@@ -143,11 +138,11 @@ public class Activity_Conversation extends Activity {
 	               	sms.setMessageDate(messageDate);
                 	
 	                sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
+	                sms.setMessageType(messageType);
 	               	sms.isDraft(true);
 	               	smsList.add(sms);
                 } 
-                
-                //Add sent messages from user to conversation to smsList
+                //Add sent messages from user conversation to smsList
                 else if (address.equals(convAddress)) {
                 	sms.setContactName(c.getString(c.getColumnIndexOrThrow("address")).toString());
 	                
@@ -156,6 +151,7 @@ public class Activity_Conversation extends Activity {
 	               	sms.setMessageDate(messageDate);
 	               	
                 	sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
+	                sms.setMessageType(messageType);
 	               	smsList.add(sms);
                 }
                 
