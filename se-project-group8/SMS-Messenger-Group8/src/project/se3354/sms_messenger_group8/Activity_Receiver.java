@@ -41,7 +41,7 @@ public class Activity_Receiver extends BroadcastReceiver
             	msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]);
             	PhoneNoRec=msgs[i].getOriginatingAddress();
             	MessageRec=msgs[i].getMessageBody().toString();
-                smsString += "SMS from " + PhoneNoRec+" : "+"\n"+MessageRec+"\n";                   
+                smsString += "SMS from " +"<"+ PhoneNoRec+"> : "+"\n"+"["+ MessageRec+"]\n";                   
             }
             
             /* display the new message */
@@ -54,14 +54,20 @@ public class Activity_Receiver extends BroadcastReceiver
             //Autoreply: if Auto_Reply button is on, reply "I am not available"
             if (activity1st.autoReplyOn==1 & !PhoneNoRec.equals(oldSMS)){
             	// if two devices have "Auto_Reply" on, they will reply each other only once
+            	//oldSMS is a blocker, when new coming is same as previous number
             	            			     		   		
 	            	SmsManager sms = SmsManager.getDefault();
 	            	String ar = MainActivity.txtAutoReply.getText().toString();
 	            	oldSMS=PhoneNoRec;
 	            	sms.sendTextMessage(PhoneNoRec, null, ar, null, null);          	
 	            	
-            	
+            //If Auto_Reply switch off, oldSMS is reset to be null. So, if no other number call in, 
+	        //the same number will not be blocked when next time Auto_reply is on.
+            }else if (activity1st.autoReplyOn!=1){
+            	oldSMS="";
+            
             }
+          
         } 
         
         /* tell the inbox it needs to update */

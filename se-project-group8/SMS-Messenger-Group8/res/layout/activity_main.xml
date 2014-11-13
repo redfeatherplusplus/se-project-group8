@@ -180,14 +180,20 @@
 	                android:layout_weight="1"
 	                android:text="Forward"
 	                />
-	 
-	            <Button
+	 	        <Button
 	                android:id="@+id/btnReply"
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
 	                android:layout_alignParentBottom="true"
 	                android:layout_weight="1"
 	                android:text="Reply" />
+	            <Button
+	                android:id="@+id/btnEdit"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentBottom="true"
+	                android:layout_weight="1"
+	                android:text="Edit" />
 	 
 	    </LinearLayout>
 	    

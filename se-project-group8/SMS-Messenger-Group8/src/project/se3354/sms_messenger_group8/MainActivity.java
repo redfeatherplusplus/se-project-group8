@@ -34,6 +34,9 @@ public class MainActivity extends Activity
 	Button btnSaveDraft;
 	Button btnOpenDraft;
 	Button btnInbox;
+	Button btnForward;
+	Button btnReply;
+	Button btnEdit;
 	EditText txtMessage;
 	ToggleButton toggleBtnAutoReply;
 	
@@ -56,6 +59,9 @@ public class MainActivity extends Activity
         btnInbox = (Button) findViewById(R.id.btnInbox);
         btnSaveDraft = (Button) findViewById(R.id.btnSaveDraft);
         btnOpenDraft = (Button) findViewById(R.id.btnOpenDraft);
+        btnForward = (Button) findViewById(R.id.btnForward);
+        btnReply = (Button) findViewById(R.id.btnReply);
+        btnEdit = (Button) findViewById(R.id.btnEdit);
         
         txtPhoneNo = (EditText) findViewById(R.id.txtPhoneNo);
         txtMessage = (EditText) findViewById(R.id.txtMessage);
@@ -86,9 +92,7 @@ public class MainActivity extends Activity
             	/* Error reports, when phone number or/and message is empty  */
                 if (phoneNo.length()>0 && message.length()>0) {               
                     sendSMS(phoneNo, message);
-                    /*Write newly sent message in the TextView box*/
-                    //txtReceive.setText("SMS sent to "+phoneNo+" : "+message);
-                    
+                   
                     //Clear phone number box and message box after Sending
                     txtPhoneNo.setText(null);
                     txtMessage.setText(null);
@@ -124,8 +128,8 @@ public class MainActivity extends Activity
             	if (phoneNo.length()>0) {               
             		Date resultdate = new Date(System.currentTimeMillis());
                     /*Write newly sent message in the TextView box*/
-                    txtReceive.setText("Saved draft for SMS sending to "+phoneNo+" : "
-                    		+"\n"+message+"\n"+resultdate);
+                    txtReceive.setText("Saved draft for SMS sending to " + "<" + phoneNo + "> : "
+                    		+"\n"+"["+message+"]\n"+resultdate);
                     
                     //Clear phone number box and message box after Sending
                     txtPhoneNo.setText(null);
@@ -154,12 +158,13 @@ public class MainActivity extends Activity
                 startActivityForResult(myIntent, 0);
             }
         });
-        
+        // Action for Auto_Reply button. 
         toggleBtnAutoReply.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                 	Toast.makeText(getApplicationContext(), "Auto_Reply ON",
                     		Toast.LENGTH_SHORT).show();
+                	//When it is on, switch is set to 1, and it will be used in "Activity.Receiver"
                 	autoReplyOn=1; 
                 } else {
                 	Toast.makeText(getApplicationContext(), "Auto_Reply OFF",
@@ -168,8 +173,49 @@ public class MainActivity extends Activity
                 }
             }
         });
+        // Action for Forward button. It will fill phone number field and leave message empty
+        btnForward.setOnClickListener(new View.OnClickListener() 
+        {
+            public void onClick(View v) { 
+	            
+	            String message = txtReceive.getText().toString();
+           	 	if (message.length()>0){
+	                 message = message.substring(message.indexOf('[')+1, message.lastIndexOf(']'));
+	                 txtPhoneNo.setText(null);
+	                 txtMessage.setText(message);	
+           	 }
+            }
+        });
+     // Action for Reply button. It will fill message field and leave phone number empty
+        btnReply.setOnClickListener(new View.OnClickListener() 
+        {
+            public void onClick(View v) {
+            	String phoneNo = txtReceive.getText().toString();
+	            if (phoneNo.length()>0){
+		            phoneNo = phoneNo.substring(phoneNo.indexOf('<')+1, phoneNo.indexOf('>'));
+		            txtMessage.setText(null);
+		            txtPhoneNo.setText(phoneNo);
+	            }
+            }
+        });
+     // Action for Edit button.It will fill both phone number and message fields
+        btnEdit.setOnClickListener(new View.OnClickListener() 
+        {
+            public void onClick(View v) {
+            	 String message = txtReceive.getText().toString();
+            	 String phoneNo = txtReceive.getText().toString();
+            	 if (message.length()>0){
+	 	             phoneNo = phoneNo.substring(phoneNo.indexOf('<')+1, phoneNo.indexOf('>'));
+	                 message = message.substring(message.indexOf('[')+1, message.lastIndexOf(']'));
+	                 txtPhoneNo.setText(phoneNo);
+	                 txtMessage.setText(message);
+            	 }
+            	
+            }
+        });
 
     }
+    
     
     /* Method of sending a message to another device */
     public void sendSMS(String phoneNumber, String message)
@@ -183,18 +229,22 @@ public class MainActivity extends Activity
             		Toast.LENGTH_SHORT).show();
             //Add time and date at the end
             Date resultdate = new Date(System.currentTimeMillis());
-            txtReceive.setText("SMS sent to "+phoneNumber+" :"+"\n"+message+"\n"+ resultdate);
+            txtReceive.setText("SMS sent to "+"<"+phoneNumber+"> :"
+            		+"\n"+"["+ message+"]\n"+ resultdate);
          } 
         // Not sure how to test exception
         catch (Exception e) {
             Toast.makeText(getApplicationContext(),
             "SMS failed",
             	Toast.LENGTH_LONG).show();
-            txtReceive.setText("SMS sent to "+phoneNumber+" :"+"\n"+message+"\n"+" !!!SMS failed");
+            Date resultdate = new Date(System.currentTimeMillis());
+            txtReceive.setText("SMS sent to "+"<"+phoneNumber+"> :"+"\n"
+            		+"["+ message+"]\n" +" !!!SMS failed\n"+resultdate);
             e.printStackTrace();
          }
     }
-   
+    
+
 
 
 }
