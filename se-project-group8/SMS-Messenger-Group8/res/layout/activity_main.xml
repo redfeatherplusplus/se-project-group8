@@ -27,7 +27,7 @@
 	            <Button android:layout_height="wrap_content"
 	                 android:id="@+id/btnFindContactNo"
 	                 android:text="From contacts"
-	                 android:layout_width="wrap_content"
+	                 android:layout_width="fill_parent"
 	                 android:layout_weight="1"
 	                 android:layout_alignParentBottom="true">
 	            </Button>
@@ -35,7 +35,7 @@
 	            <Button android:layout_height="wrap_content"
 	                android:id="@+id/btnAddMoreNo"
 	                 android:text="Add more"
-	                 android:layout_width="wrap_content"
+	                 android:layout_width="fill_parent"
 	                 android:layout_weight="1"
 	                 android:layout_alignParentBottom="true">
 	           </Button>
@@ -65,7 +65,7 @@
 	
 	            <Button
 	                android:id="@+id/btnSendSMS"
-	                android:layout_width="wrap_content"
+	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
 	                android:layout_alignParentBottom="true"
 	                android:layout_weight="1"
@@ -74,11 +74,11 @@
 	 
 	            <Button
 	                android:id="@+id/btnScheduleSend"
-	                android:layout_width="wrap_content"
+	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
 	                android:layout_alignParentBottom="true"
 	                android:layout_weight="1"
-	                android:text="Go to Conversation" />
+	                android:text="Send Later" />
 	 
 	    </LinearLayout>
 	    
@@ -100,25 +100,11 @@
 	        android:text="ToggleButton"
 	        android:textOff="Auto_Reply is off"
 	        android:textOn="Auto_Reply is on" />
-	
-	    <EditText 
-	        android:id="@+id/txtContacts"  
-	        android:layout_width="fill_parent" 
-	        android:layout_height="wrap_content"
-	        android:text="Search by phone number or contact name"        
-	        />
 	    
 	    <LinearLayout
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    >
-	            <Button android:layout_height="wrap_content"
-	                 android:id="@+id/btnSearchNo"
-	                 android:text="Search number"
-	                 android:layout_width="wrap_content"
-	                 android:layout_weight="1"
-	                 android:layout_alignParentBottom="true"
-	                 />
 	 
 	    </LinearLayout>
 	    
@@ -127,13 +113,6 @@
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content"
 	        android:text="Get into Inbox"
-	        />
-	          
-	     <Button 
-	        android:id="@+id/btnSetAutoReply"  
-	        android:layout_width="fill_parent" 
-	        android:layout_height="wrap_content"
-	        android:text="Setting for Auto-reply"
 	        />
 	     
 	        <TextView  
