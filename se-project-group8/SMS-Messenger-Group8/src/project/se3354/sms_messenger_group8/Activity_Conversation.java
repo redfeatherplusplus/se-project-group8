@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.PhoneLookup;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -131,7 +132,7 @@ public class Activity_Conversation extends Activity {
                 	// address is null for drafts, because of this we need to find the phone number
                 	// by searching "content://mms-sms/canonical-addresses" with our thread_id
                 	String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id")).toString();
-                	sms.setContactName(getAddressFromThreadID(thread_id));
+                	sms.setPhoneNumber(getAddressFromThreadID(thread_id));
                 	
                 	// date needs to be formatted from primitive long datatype
                 	String messageDate = SimplifyDate(c.getLong(c.getColumnIndexOrThrow("date")));
@@ -142,7 +143,7 @@ public class Activity_Conversation extends Activity {
 	               	sms.isDraft(true);
                 } 
                 else {
-                	sms.setContactName(c.getString(c.getColumnIndexOrThrow("address")).toString());
+                	sms.setPhoneNumber(c.getString(c.getColumnIndexOrThrow("address")).toString());
 	                
 	                // date needs to be formatted from primitive long datatype
                 	String messageDate = SimplifyDate(c.getLong(c.getColumnIndexOrThrow("date")));
@@ -152,8 +153,10 @@ public class Activity_Conversation extends Activity {
 	                sms.setMessageType(messageType);
                 }
                 //only add message if address is convAddress.
-                if (sms.getContactName().equals(convAddress))
+                if (sms.getPhoneNumber().equals(convAddress))
                 {
+                	//replace phone number with contact name if possible
+                	sms.setContactName(getContactName(sms.getPhoneNumber()));
                 	smsList.add(sms);
                 }
                 
@@ -192,6 +195,19 @@ public class Activity_Conversation extends Activity {
        	
        	return (address);
     }
+	
+	public String getContactName(String address) {
+        Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(address));  
+        Cursor cs = getContentResolver().query(uri, new String[]{PhoneLookup.DISPLAY_NAME},PhoneLookup.NUMBER+"='"+address+"'",null,null);
+
+        if(cs.getCount()>0) {
+        	cs.moveToFirst();
+        	String ContactName = cs.getString(cs.getColumnIndex(PhoneLookup.DISPLAY_NAME));
+        	return (ContactName);
+        } 
+        
+        return(address);
+	}
 	
 	public String SimplifyDate(Long Date)
     {

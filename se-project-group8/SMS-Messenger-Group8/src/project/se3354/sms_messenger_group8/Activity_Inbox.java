@@ -9,6 +9,7 @@ import android.app.ActionBar.LayoutParams;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.PhoneLookup;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -109,7 +110,7 @@ public class Activity_Inbox extends Activity {
 					int position, long id) {
 				//display conversation for that address
 				Intent displayConv = new Intent(view.getContext(), Activity_Conversation.class);
-				String convAddress = smsList.get(position).getContactName();
+				String convAddress = smsList.get(position).getPhoneNumber();
                 displayConv.putExtra("convAddress", convAddress);
 				startActivity(displayConv);
 				finish();
@@ -162,11 +163,11 @@ public class Activity_Inbox extends Activity {
                 MyMessage sms = new MyMessage();
                 messageType = c.getString(c.getColumnIndexOrThrow("type")).toString();
                 
-                if (DRAFT.equals(messageType)) {
+                if(DRAFT.equals(messageType)) {
                 	// address is null for drafts, because of this we need to find the phone number
                 	// by searching "content://mms-sms/canonical-addresses" with our thread_id
                 	String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id")).toString();
-                	sms.setContactName(getAddressFromThreadID(thread_id));
+                	sms.setPhoneNumber(getAddressFromThreadID(thread_id));
                 	
                 	// date needs to be formatted from primitive long datatype
                 	String messageDate = SimplifyDate(c.getLong(c.getColumnIndexOrThrow("date")));
@@ -178,7 +179,7 @@ public class Activity_Inbox extends Activity {
 	               	smsList.add(sms);
                 } 
                 else {
-	                sms.setContactName(c.getString(c.getColumnIndexOrThrow("address")).toString());
+	                sms.setPhoneNumber(c.getString(c.getColumnIndexOrThrow("address")).toString());
 	                
 	                // date needs to be formatted from primitive long datatype
                 	String messageDate = SimplifyDate(c.getLong(c.getColumnIndexOrThrow("date")));
@@ -188,6 +189,8 @@ public class Activity_Inbox extends Activity {
                     sms.setMessageType(messageType);
 	               	smsList.add(sms);
                 }
+                //replace phonenumber with contactName
+                sms.setContactName(getContactName(sms.getPhoneNumber()));
                	c.moveToNext();
            	}
        	}
@@ -223,6 +226,19 @@ public class Activity_Inbox extends Activity {
        	
        	return (address);
     }
+	
+	public String getContactName(String address) {
+        Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(address));  
+        Cursor cs = getContentResolver().query(uri, new String[]{PhoneLookup.DISPLAY_NAME},PhoneLookup.NUMBER+"='"+address+"'",null,null);
+
+        if(cs.getCount()>0) {
+        	cs.moveToFirst();
+        	String ContactName = cs.getString(cs.getColumnIndex(PhoneLookup.DISPLAY_NAME));
+        	return (ContactName);
+        } 
+        
+        return(address);
+	}
 	
 	public String SimplifyDate(Long Date)
     {
