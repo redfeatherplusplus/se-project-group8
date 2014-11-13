@@ -124,7 +124,7 @@ public class MainActivity extends Activity
             	if (phoneNo.length()>0) {               
             		Date resultdate = new Date(System.currentTimeMillis());
                     /*Write newly sent message in the TextView box*/
-                    txtReceive.setText("Saved draft SMS want sent to "+phoneNo+" : "
+                    txtReceive.setText("Saved draft for SMS sending to "+phoneNo+" : "
                     		+"\n"+message+"\n"+resultdate);
                     
                     //Clear phone number box and message box after Sending
