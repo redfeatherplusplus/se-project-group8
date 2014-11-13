@@ -16,6 +16,9 @@ import android.widget.Toast;
 import android.widget.TextView; 
 import android.widget.ToggleButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import java.lang.Object;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainActivity extends Activity 
 {
@@ -148,7 +151,9 @@ public class MainActivity extends Activity
                     this, 0, new Intent("SMS_SENT"), 0), null);
             Toast.makeText(getApplicationContext(), "SMS Sent",
             		Toast.LENGTH_SHORT).show();
-            txtReceive.setText("SMS sent to "+phoneNumber+" :"+"\n"+message+"\n");
+            //Add time and date at the end
+            Date resultdate = new Date(System.currentTimeMillis());
+            txtReceive.setText("SMS sent to "+phoneNumber+" :"+"\n"+message+"\n"+ resultdate);
          } 
         // Not sure how to test exception
         catch (Exception e) {

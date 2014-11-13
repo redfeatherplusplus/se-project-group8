@@ -1,5 +1,7 @@
 package project.se3354.sms_messenger_group8;
 
+import java.util.Date;
+
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -45,8 +47,9 @@ public class Activity_Receiver extends BroadcastReceiver
             /* display the new message */
             Toast.makeText(context, "SMS Received", Toast.LENGTH_SHORT).show();
             /*Write newly received message in the TextView box*/
+            Date resultdate = new Date(System.currentTimeMillis());
             MainActivity activity1st=new MainActivity();
-            activity1st.txtReceive.setText(smsString);
+            activity1st.txtReceive.setText(smsString+"\n"+resultdate);
             
             //Autoreply: if Auto_Reply button is on, reply "I am not available"
             if (activity1st.autoReplyOn==1 & !PhoneNoRec.equals(oldSMS)){
