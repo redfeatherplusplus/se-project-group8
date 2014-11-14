@@ -73,6 +73,10 @@ public class Activity_Receiver extends BroadcastReceiver
         /* tell the inbox it needs to update */
         Intent update = new Intent("Inbox.updateActivity");
         context.sendBroadcast(update);
+        
+        /* tell the conversation it needs to update */
+        Intent updateConv = new Intent("Conversation.updateActivity");
+        context.sendBroadcast(updateConv);
 
     }
 

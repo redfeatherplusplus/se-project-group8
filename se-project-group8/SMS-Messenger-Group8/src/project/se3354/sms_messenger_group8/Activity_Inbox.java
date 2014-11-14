@@ -73,7 +73,7 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	    btnReturn = (Button) findViewById(R.id.btnReturn);
 	    inputSearch = (EditText) findViewById(R.id.inputSearch);
 	    
-		// Create a progress bar to display while the list loads
+	    // Create a progress bar to display while the list loads
 	    messagesList.setEmptyView(findViewById(R.id.loadingScreen));
 	    
 	    // fill the list with sms messages

@@ -75,7 +75,7 @@ public class Activity_Conversation extends Activity {
 	    registerReceiver(new BroadcastReceiver(){
 	        public void onReceive(Context context, Intent intent) {
 	        	// update the inbox, save searchbox during update
-		        String SearchBox = inputSearch.getText().toString();
+		        // String SearchBox = inputSearch.getText().toString();
 	            mAdapter.clear();
 	            smsListGenerate();
 	            
@@ -84,7 +84,7 @@ public class Activity_Conversation extends Activity {
 	    				R.layout.message_layout, smsList);
 	            mAdapter.notifyDataSetChanged();
 	    		messagesList.setAdapter(mAdapter);
-		        inputSearch.setText(SearchBox);
+		        // inputSearch.setText(SearchBox);
 	        }
 	    }, filterState);
 		
