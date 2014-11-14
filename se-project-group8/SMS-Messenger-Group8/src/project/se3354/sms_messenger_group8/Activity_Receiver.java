@@ -19,6 +19,7 @@ public class Activity_Receiver extends BroadcastReceiver
 	private static String PhoneNoRec = "";
     private static String MessageRec = "";
     private static String oldSMS = ""; 
+    Activity_Inbox resetLoadingSignal = null;  
 	 
     @Override
     public void onReceive(Context context, Intent intent) 
@@ -79,6 +80,10 @@ public class Activity_Receiver extends BroadcastReceiver
         context.sendBroadcast(updateConv);
 
     }
+    
+    public void setMainActivityHandler(Activity_Inbox inbox){
+    	resetLoadingSignal = inbox;
+	}  
 
     
 }

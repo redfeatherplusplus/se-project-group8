@@ -55,6 +55,7 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	//This is the Adapter being used to display the list's data
 	private ContactsAdapter mAdapter = null;
 	private ArrayList<MyMessage> smsList = null;
+	private NewMessageReceiver newMessageSignal = null;
 	
 	// These are the Contacts rows that we will retrieve
 	static final String[] PROJECTION = new String[] {ContactsContract.Data._ID,
@@ -82,21 +83,8 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	    
 	    // Create a receiver to update the inbox
 	    IntentFilter filterState = new IntentFilter("Inbox.updateActivity");
-	    registerReceiver(new BroadcastReceiver(){
-	        public void onReceive(Context context, Intent intent) {
-	        	// update the inbox, save searchbox during update
-		        String SearchBox = inputSearch.getText().toString();
-	            mAdapter.clear();
-	            smsListGenerate();
-	            
-	            // create a new message filter since the database changed
-	            mAdapter = new ContactsAdapter(Activity_Inbox.this, 
-	    				R.layout.message_layout, smsList);
-	            mAdapter.notifyDataSetChanged();
-	    		messagesList.setAdapter(mAdapter);
-		        inputSearch.setText(SearchBox);
-	        }
-	    }, filterState);
+	    newMessageSignal = new NewMessageReceiver();
+	    registerReceiver(newMessageSignal, filterState);
 		
 		// Create an empty adapter we will use to display the loaded data.
 		// We pass null for the cursor, then update it in onLoadFinished()
@@ -258,7 +246,39 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 		
 		return(month_day.format(messageDate));
     }
+	
+    public void stopLoading() {
+    	getLoaderManager().getLoader(0).stopLoading();
+    }
+    
+    public void restartLoading() {
+    	getLoaderManager().restartLoader(0, null, this).forceLoad();
+    }
 
+	//inner broadcaster to receive messages
+	public class NewMessageReceiver extends BroadcastReceiver{
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// stop the loader
+			stopLoading();
+			
+        	// update the inbox, save searchbox during update
+	        String SearchBox = inputSearch.getText().toString();
+            mAdapter.clear();
+            smsListGenerate();
+            
+            // create a new message filter since the database changed
+            mAdapter = new ContactsAdapter(Activity_Inbox.this, 
+    				R.layout.message_layout, smsList);
+            mAdapter.notifyDataSetChanged();
+    		messagesList.setAdapter(mAdapter);
+	        inputSearch.setText(SearchBox);
+	        
+	        //reset the loader
+		    restartLoading();
+		}
+	}
+	
 	@Override
 	public Loader<ArrayList<MyMessage>> onCreateLoader(int id, Bundle args) {
 		// TODO Auto-generated method stub

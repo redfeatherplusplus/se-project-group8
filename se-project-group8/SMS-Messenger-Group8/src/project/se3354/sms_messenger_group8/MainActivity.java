@@ -52,7 +52,6 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        
         btnFindContactNo = (Button) findViewById(R.id.btnFindContactNo); 
         btnSendSMS = (Button) findViewById(R.id.btnSendSMS);
         btnScheduleSend = (Button) findViewById(R.id.btnScheduleSend);

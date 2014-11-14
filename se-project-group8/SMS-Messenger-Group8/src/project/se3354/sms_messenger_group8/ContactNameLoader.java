@@ -23,7 +23,7 @@ public final class ContactNameLoader extends AsyncTaskLoader<ArrayList<MyMessage
 		// TODO Auto-generated constructor stub
 	}
     @Override
-    protected void onStartLoading() {
+    protected synchronized void onStartLoading() {
             // just make sure if we already have content to deliver
             if (smsMessages != null)
                     deliverResult(smsMessages);
@@ -34,12 +34,12 @@ public final class ContactNameLoader extends AsyncTaskLoader<ArrayList<MyMessage
     }
 
     @Override
-    protected void onStopLoading() {
+    protected synchronized void onStopLoading() {
             cancelLoad();
     }
 
     @Override
-    protected void onReset() {
+    protected synchronized void onReset() {
             super.onReset();
 
             onStopLoading();
@@ -51,38 +51,41 @@ public final class ContactNameLoader extends AsyncTaskLoader<ArrayList<MyMessage
     }
     
     @Override
-    public ArrayList<MyMessage> loadInBackground() {
-            for(MyMessage message : smsMessages) {
-            	//if the contact name is its phone number, if we haven't gotten the name yet
-            	if(message.getPhoneNumber().equals(message.getContactName())) {
-            		//replace the phone number with the contact name
-                	message.setContactName(getContactName(message.getPhoneNumber()));
-                	
-                	//replace the contact name for each message that has the same number
-                	//we do this because the getContactName call is expensive
-                	String thisContactName = message.getContactName();
-                	String thisContactNumber = message.getPhoneNumber();
-                	for(MyMessage contact : smsMessages) {
-                		if (contact.getPhoneNumber().equals(thisContactNumber)) {
-                			contact.setContactName(thisContactName);
-                		}
-                	}
+    public synchronized ArrayList<MyMessage> loadInBackground() {
+    	for(int i=0; i<smsMessages.size(); i++) {
+        	//if the contact name is its phone number, if we haven't gotten the name yet
+        	if(smsMessages.get(i).getPhoneNumber().equals(smsMessages.get(i).getContactName())) {
+        		//replace the phone number with the contact name
+        		smsMessages.get(i).setContactName(getContactName(smsMessages.get(i).getPhoneNumber()));
+            	
+            	//replace the contact name for each message that has the same number
+            	//we do this because the getContactName call is expensive
+            	String thisContactName = smsMessages.get(i).getContactName();
+            	String thisContactNumber = smsMessages.get(i).getPhoneNumber();
+            	for(int j=0; j<smsMessages.size(); j++) {
+            		if (smsMessages.get(i).getPhoneNumber().equals(thisContactNumber)) {
+            			smsMessages.get(i).setContactName(thisContactName);
+            		}
             	}
-            }
+        	}
+        }        
             
         return smsMessages;
     }
-	public String getContactName(String address) {
+    
+	public synchronized String getContactName(String address) {
         Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(address));  
         Cursor cs = context.getContentResolver().query(uri, new String[]{PhoneLookup.DISPLAY_NAME},PhoneLookup.NUMBER+"='"+address+"'",null,null);
 
         if(cs.getCount()>0) {
         	cs.moveToFirst();
         	String ContactName = cs.getString(cs.getColumnIndex(PhoneLookup.DISPLAY_NAME));
+            cs.close();
         	return (ContactName);
         } 
-        
-        cs.close();
-        return(address);
+        else {
+        	cs.close();
+        	return(address);
+        }
 	}
 }
