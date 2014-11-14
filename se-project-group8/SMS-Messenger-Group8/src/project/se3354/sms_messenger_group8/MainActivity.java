@@ -134,6 +134,8 @@ public class MainActivity extends Activity
                     txtPhoneNo.setText(null);
                     txtMessage.setText(null);
                     
+                    //create a new thread_id and add it to the list if the PhoneNo doesn't alreadu
+                    
 	            	values.put("address", phoneNo);
 	        		values.put("body", message);
 	        		values.put("date", String.valueOf(System.currentTimeMillis())); 

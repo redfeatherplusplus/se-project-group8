@@ -216,17 +216,16 @@ public class Activity_Conversation extends Activity {
 	
 	public String SimplifyDate(Long Date)
     {
-		String SimpleDate = "Feb 30";
-		SimpleDateFormat month_day = new SimpleDateFormat("LLL W");
+		SimpleDateFormat month_day_year = new SimpleDateFormat("MMMMM d, yyyy");
+		SimpleDateFormat month_day = new SimpleDateFormat("MMM d");
 		SimpleDateFormat time_xm = new SimpleDateFormat("h:mm a");
 		Date currentDate = new Date();
 		Date messageDate = new Date(Date);
 		
 		// if the message was sent today, return the exact time it was sent
-		if (month_day.format(messageDate).equals(month_day.format(currentDate))) {
+		if (month_day_year.format(messageDate).equals(month_day_year.format(currentDate))) {
 			return (time_xm.format(messageDate));
 		}
-		
 		return(month_day.format(messageDate));
     }
 
