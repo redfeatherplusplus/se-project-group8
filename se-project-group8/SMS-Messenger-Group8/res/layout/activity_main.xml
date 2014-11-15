@@ -9,14 +9,17 @@
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
 	    >
+	    <!--  
 	    <TextView  
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content" 
 	        android:text="Enter a new number"
-	        />     
+	        />
+	    -->     
 	
 	    <EditText
 	        android:id="@+id/txtPhoneNo"
+	        android:hint="Enter a new number here"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content" />
 	    
@@ -47,15 +50,16 @@
 	    	    android:layout_height="wrap_content"
 	    	    android:text=""
 	    	    android:background="#ffffffff" />
-	       
+	    <!--   
 	    <TextView  
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content"         
 	        android:text="Message Text"
 	        />
-	
+	     -->  
 	    <EditText
 	        android:id="@+id/txtMessage"
+	        android:hint="Enter SMS text here"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:ems="10"
@@ -122,6 +126,7 @@
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content" 
 	        android:text="Auto Reply Message"
+	        android:textSize="14dp"
 	        />
 		<EditText 
 	        android:id="@+id/txtAutoReply"  
@@ -166,6 +171,7 @@
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content" 
 	        android:text="Newest message"
+	        android:textSize="14dp"
 	        />
 	
 	        <TextView

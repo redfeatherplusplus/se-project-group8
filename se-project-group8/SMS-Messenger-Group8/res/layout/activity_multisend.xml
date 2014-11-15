@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    
+	<LinearLayout 
+	    android:orientation="vertical" 
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent">
+	    
+	    <EditText
+	    android:id="@+id/editText"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:hint="Enter number"
+	    
+	    android:layout_alignParentTop="true"
+	    android:layout_centerHorizontal="true" />
+		<Button
+		    android:id="@+id/addTaskBtn"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:text="Add To List"
+		    android:layout_below="@+id/editText"
+		    android:layout_alignParentLeft="true" />
+		<TextView
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:text="      Sending List:"
+		    android:id="@+id/header"
+		    android:layout_below="@+id/addTaskBtn"
+		    android:background="#5e5e5e"
+		    android:textColor="#FFFFFF"
+		    android:textSize="14dp"/>
+
+		<ListView
+		    android:id="@+id/list"
+		    android:layout_width="wrap_content"
+		    android:layout_height="218dp"
+		    android:layout_below="@+id/header"
+		    android:layout_centerHorizontal="true" />
+		
+		
+		<LinearLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    >
+			<Button
+	                android:id="@+id/btnSendMulti"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentBottom="true"
+	                android:layout_weight="1"
+	                android:text="Send and go back"
+	                />
+			<Button
+	                android:id="@+id/btnBack"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentBottom="true"
+	                android:layout_weight="1"
+	                android:text="Discard"
+	                />
+		
+		</LinearLayout>	
+			
+		<TextView
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:text="      Message Text:"
+		    android:id="@+id/header2"
+		    android:layout_below="@+id/addTaskBtn"
+		    android:background="#5e5e5e"
+		    android:textColor="#FFFFFF"
+		    android:textSize="14dp"/>
+		<EditText
+	        android:id="@+id/txtMessage"
+	        android:hint="Enter SMS text here"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:ems="10"
+	        android:gravity="top" />
+	    
+	</LinearLayout>
+
+</ScrollView>
