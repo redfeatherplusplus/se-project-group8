@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import project.se3354.sms_messenger_group8.Activity_Inbox.NewMessageReceiver;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -41,8 +42,9 @@ public class Activity_Conversation extends Activity {
 	//////////////////////////
 	
 	//This is the Adapter being used to display the list's data
-	private ContactsAdapter mAdapter;
-	private ArrayList<MyMessage> smsList;
+	private ContactsAdapter mAdapter = null;
+	private ArrayList<MyMessage> smsList = null;
+	private NewMessageReceiver newMessageSignal = null;
 	
 	//Create String Value of the Phone Number of other Person in Conversation
 	private String convAddress;
@@ -72,22 +74,9 @@ public class Activity_Conversation extends Activity {
 	    
 	    // Create a receiver to update the conversation
 	    IntentFilter filterState = new IntentFilter("Conversation.updateActivity");
-	    registerReceiver(new BroadcastReceiver(){
-	        public void onReceive(Context context, Intent intent) {
-	        	// update the inbox, save searchbox during update
-		        // String SearchBox = inputSearch.getText().toString();
-	            mAdapter.clear();
-	            smsListGenerate();
-	            
-	            // create a new message filter since the database changed
-	            mAdapter = new ContactsAdapter(Activity_Conversation.this, 
-	    				R.layout.message_layout, smsList);
-	            mAdapter.notifyDataSetChanged();
-	    		messagesList.setAdapter(mAdapter);
-		        // inputSearch.setText(SearchBox);
-	        }
-	    }, filterState);
-		
+	    newMessageSignal = new NewMessageReceiver();
+	    registerReceiver(newMessageSignal, filterState);
+	    
 		// Create an empty adapter we will use to display the loaded data.
 		// We pass null for the cursor, then update it in onLoadFinished()
 		mAdapter = new ContactsAdapter(Activity_Conversation.this, 
@@ -228,5 +217,27 @@ public class Activity_Conversation extends Activity {
 		}
 		return(month_day.format(messageDate));
     }
+	//inner broadcaster to receive messages
+	public class NewMessageReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+        	// update the inbox, save searchbox during update
+	        // String SearchBox = inputSearch.getText().toString();
+            mAdapter.clear();
+            smsListGenerate();
+            
+            // create a new message filter since the database changed
+            mAdapter = new ContactsAdapter(Activity_Conversation.this, 
+    				R.layout.message_layout, smsList);
+            mAdapter.notifyDataSetChanged();
+    		messagesList.setAdapter(mAdapter);
+	        // inputSearch.setText(SearchBox);
+		}
+	}
+	@Override
+    protected void onDestroy() {
+	    unregisterReceiver(newMessageSignal);
+		super.onDestroy();
+	}
 
 }

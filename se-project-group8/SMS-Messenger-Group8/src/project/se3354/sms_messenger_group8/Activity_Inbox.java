@@ -39,7 +39,7 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	
 	public static final String DRAFT = "3";
 	public static final String USERSENT = "2";
-	public static final String RECIEVED = "1";
+	public static final String RECEIVED = "1";
 	
 	// Search EditText
     EditText inputSearch;
@@ -255,7 +255,7 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
     }
 
 	//inner broadcaster to receive messages
-	public class NewMessageReceiver extends BroadcastReceiver{
+	public class NewMessageReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			// stop the loader
@@ -276,6 +276,12 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	        //reset the loader
 		    restartLoading();
 		}
+	}
+
+	@Override
+    protected void onDestroy() {
+	    unregisterReceiver(newMessageSignal);
+		super.onDestroy();
 	}
 	
 	@Override

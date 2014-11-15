@@ -53,21 +53,7 @@ public final class ContactNameLoader extends AsyncTaskLoader<ArrayList<MyMessage
     @Override
     public synchronized ArrayList<MyMessage> loadInBackground() {
     	for(int i=0; i<smsMessages.size(); i++) {
-        	//if the contact name is its phone number, if we haven't gotten the name yet
-        	if(smsMessages.get(i).getPhoneNumber().equals(smsMessages.get(i).getContactName())) {
-        		//replace the phone number with the contact name
-        		smsMessages.get(i).setContactName(getContactName(smsMessages.get(i).getPhoneNumber()));
-            	
-            	//replace the contact name for each message that has the same number
-            	//we do this because the getContactName call is expensive
-            	String thisContactName = smsMessages.get(i).getContactName();
-            	String thisContactNumber = smsMessages.get(i).getPhoneNumber();
-            	for(int j=0; j<smsMessages.size(); j++) {
-            		if (smsMessages.get(i).getPhoneNumber().equals(thisContactNumber)) {
-            			smsMessages.get(i).setContactName(thisContactName);
-            		}
-            	}
-        	}
+    		smsMessages.get(i).setContactName(getContactName(smsMessages.get(i).getPhoneNumber()));
         }        
             
         return smsMessages;

@@ -3,12 +3,17 @@ package project.se3354.sms_messenger_group8;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.telephony.SmsManager;
 import android.view.View;
 import android.widget.Button;
@@ -17,14 +22,15 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.TextView; 
 import android.widget.ToggleButton;
+import android.provider.Telephony.Sms.Inbox;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+
 import java.lang.Object;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MainActivity extends Activity 
 {
-
 	public static EditText txtAutoReply;
 	public static EditText txtPhoneNo;
 	
@@ -70,7 +76,6 @@ public class MainActivity extends Activity
         txtAutoReply = (EditText) findViewById(R.id.txtAutoReply);
         toggleBtnAutoReply = (ToggleButton) findViewById(R.id.toggleBtnAutoReply); // Auto_Reply button
         
-    
         /* Action when click "From Contacts" button */             
         btnFindContactNo.setOnClickListener(new View.OnClickListener() 
         {
@@ -134,14 +139,11 @@ public class MainActivity extends Activity
                     txtPhoneNo.setText(null);
                     txtMessage.setText(null);
                     
-                    //create a new thread_id and add it to the list if the PhoneNo doesn't alreadu
-                    
-	            	values.put("address", phoneNo);
-	        		values.put("body", message);
-	        		values.put("date", String.valueOf(System.currentTimeMillis())); 
-	        		values.put("type", "3");
-	        		values.put("thread_id", "0"); 
-	        		getContentResolver().insert(Uri.parse("content://sms/draft"), values);
+                    saveDraft(phoneNo, message);
+	        		
+	        		//state that message was saved as a draft
+                	Toast.makeText(getBaseContext(), "Message saved as draft.", 
+                            Toast.LENGTH_LONG).show();
             	}
             	//phone number has to be there, if not, report error
             	else {
@@ -217,35 +219,157 @@ public class MainActivity extends Activity
 
     }
     
+    @Override
+    protected void onResume() {
+        super.onResume();
+        
+        //create a package manger to enable and disable broadcast receivers as needed
+        PackageManager pm = getPackageManager();
+        ComponentName defaultSmsReceiver = new ComponentName(getApplicationContext(), 
+        		Activity_Receiver.class);
+        ComponentName nonDefaultReceiver = new ComponentName(getApplicationContext(), 
+        		Activity_Receiver_NonDefault.class);
+        
+        /* Display a set as default sms button if this is not the default SMS app */
+        final String myPackageName = getPackageName();
+        if (!Telephony.Sms.getDefaultSmsPackage(this).equals(myPackageName)) {
+            // App is not default.
+
+        	// Disable and enable receivers accordingly
+        	pm.setComponentEnabledSetting(nonDefaultReceiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, 
+        			PackageManager.DONT_KILL_APP);
+
+            // Set up a button that allows the user to change the default SMS app
+            Button button = (Button) findViewById(R.id.changeDefaultApp);
+            button.setVisibility(View.VISIBLE);
+            button.setEnabled(true);
+            button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent intent =
+                            new Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT);
+                    intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, 
+                            myPackageName);
+                    startActivity(intent);
+                }
+            });
+        } else {
+            // App is the default.
+        	// Disable and enable receivers accordingly
+        	pm.setComponentEnabledSetting(nonDefaultReceiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 
+        			PackageManager.DONT_KILL_APP);
+
+            // Hide the "not currently set as the default SMS app" interface
+            Button button = (Button) findViewById(R.id.changeDefaultApp);
+            button.setVisibility(View.GONE);
+            button.setEnabled(false);
+        }
+    }
+
     
     /* Method of sending a message to another device */
     public void sendSMS(String phoneNumber, String message)
-    {      	
-        // Send SMS, and write in bottom TextView box
-        try {
-            SmsManager sms = SmsManager.getDefault();           
-            sms.sendTextMessage(phoneNumber, null, message, PendingIntent.getBroadcast(
-                    this, 0, new Intent("SMS_SENT"), 0), null);
-            Toast.makeText(getApplicationContext(), "SMS Sent",
-            		Toast.LENGTH_SHORT).show();
-            //Add time and date at the end
-            Date resultdate = new Date(System.currentTimeMillis());
-            txtReceive.setText("SMS sent to "+"<"+phoneNumber+"> :"
-            		+"\n"+"["+ message+"]\n"+ resultdate);
-         } 
-        // Not sure how to test exception
-        catch (Exception e) {
-            Toast.makeText(getApplicationContext(),
-            "SMS failed",
-            	Toast.LENGTH_LONG).show();
-            Date resultdate = new Date(System.currentTimeMillis());
-            txtReceive.setText("SMS sent to "+"<"+phoneNumber+"> :"+"\n"
-            		+"["+ message+"]\n" +" !!!SMS failed\n"+resultdate);
-            e.printStackTrace();
-         }
+    {  
+    	if (Utils.isDefaultSmsApp(this)) {
+    		// Send SMS, and write in bottom TextView box
+            try {
+                SmsManager sms = SmsManager.getDefault();           
+                sms.sendTextMessage(phoneNumber, null, message, PendingIntent.getBroadcast(
+                        this, 0, new Intent("SMS_SENT"), 0), null);
+                Toast.makeText(getApplicationContext(), "SMS Sent",
+                		Toast.LENGTH_SHORT).show();
+
+                // manage "content://sms" since we are the default sms app
+                saveUsersentSMS(phoneNumber, message);
+                
+                //Add time and date at the end
+                Date resultdate = new Date(System.currentTimeMillis());
+                txtReceive.setText("SMS sent to "+"<"+phoneNumber+"> :"
+                		+"\n"+"["+ message+"]\n"+ resultdate);
+             } 
+            // Not sure how to test exception
+            catch (Exception e) {
+                Toast.makeText(getApplicationContext(),
+                "SMS failed",
+                	Toast.LENGTH_LONG).show();
+                Date resultdate = new Date(System.currentTimeMillis());
+                txtReceive.setText("SMS sent to "+"<"+phoneNumber+"> :"+"\n"
+                		+"["+ message+"]\n" +" !!!SMS failed\n"+resultdate);
+                e.printStackTrace();
+             }
+        // if sms app is not the default app, send normally
+        } else {
+        	// Send SMS, and write in bottom TextView box
+            try {
+                SmsManager sms = SmsManager.getDefault();           
+                sms.sendTextMessage(phoneNumber, null, message, PendingIntent.getBroadcast(
+                        this, 0, new Intent("SMS_SENT"), 0), null);
+                Toast.makeText(getApplicationContext(), "SMS Sent",
+                		Toast.LENGTH_SHORT).show();
+                
+                //Add time and date at the end
+                Date resultdate = new Date(System.currentTimeMillis());
+                txtReceive.setText("SMS sent to "+"<"+phoneNumber+"> :"
+                		+"\n"+"["+ message+"]\n"+ resultdate);
+             } 
+            // Not sure how to test exception
+            catch (Exception e) {
+                Toast.makeText(getApplicationContext(),
+                "SMS failed",
+                	Toast.LENGTH_LONG).show();
+                Date resultdate = new Date(System.currentTimeMillis());
+                txtReceive.setText("SMS sent to "+"<"+phoneNumber+"> :"+"\n"
+                		+"["+ message+"]\n" +" !!!SMS failed\n"+resultdate);
+                e.printStackTrace();
+             }
+        }
+    }    
+
+    public void saveUsersentSMS(String recipient, String body) {
+        Uri threadIdUri = Uri.parse("content://mms-sms/threadID");
+        Uri.Builder builder = threadIdUri.buildUpon();
+        builder.appendQueryParameter("recipient", recipient);
+        Uri uri = builder.build();
+        Long thread_id = get_thread_id(uri, recipient);
+
+        ContentValues values = new ContentValues();
+        values.put("address", recipient);
+        values.put("body", body);
+        values.put("date", System.currentTimeMillis());
+        values.put("type", 1);
+        values.put("thread_id", thread_id);
+        getContentResolver().insert(Uri.parse("content://sms/sent"), values);
     }
     
+    public void saveDraft(String recipient, String body) {
+        Uri threadIdUri = Uri.parse("content://mms-sms/threadID");
+        Uri.Builder builder = threadIdUri.buildUpon();
+        builder.appendQueryParameter("recipient", recipient);
+        Uri uri = builder.build();
+        Long thread_id = get_thread_id(uri, recipient);
 
-
+        ContentValues values = new ContentValues();
+        values.put("address", recipient);
+        values.put("body", body);
+        values.put("date", System.currentTimeMillis());
+        values.put("type", 3);
+        values.put("thread_id", thread_id);
+        getContentResolver().insert(Uri.parse("content://sms/draft"), values);
+    }
+    
+    private Long get_thread_id(Uri uri, String recipient) {
+        long threadId = 0;
+        Cursor cursor = getContentResolver().query(uri, new String[] { "_id" },
+                null, null, null);
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                	threadId = cursor.getLong(0);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return threadId;
+    }
 
 }

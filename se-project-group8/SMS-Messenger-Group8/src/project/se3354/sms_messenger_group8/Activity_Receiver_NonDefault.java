@@ -18,7 +18,7 @@ import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 /* device receive the message and give a popup with the number and message body*/
-public class Activity_Receiver extends BroadcastReceiver
+public class Activity_Receiver_NonDefault extends BroadcastReceiver
 {        
 	private static String PhoneNoRec = "";
     private static String MessageRec = "";
@@ -59,10 +59,10 @@ public class Activity_Receiver extends BroadcastReceiver
                 	// if two devices have "Auto_Reply" on, they will reply each other only once
                 	//oldSMS is a blocker, when new coming is same as previous number
                 	            			     		   		
-                	SmsManager sms = SmsManager.getDefault();
-                	String ar = MainActivity.txtAutoReply.getText().toString();
-                	oldSMS=PhoneNoRec;
-                	sms.sendTextMessage(PhoneNoRec, null, ar, null, null);          	
+                    	SmsManager sms = SmsManager.getDefault();
+                    	String ar = MainActivity.txtAutoReply.getText().toString();
+                    	oldSMS=PhoneNoRec;
+                    	sms.sendTextMessage(PhoneNoRec, null, ar, null, null);          	
                     	
                 //If Auto_Reply switch off, oldSMS is reset to be null. So, if no other number call in, 
                 //the same number will not be blocked when next time Auto_reply is on.
@@ -94,10 +94,10 @@ public class Activity_Receiver extends BroadcastReceiver
                 	// if two devices have "Auto_Reply" on, they will reply each other only once
                 	//oldSMS is a blocker, when new coming is same as previous number
                 	            			     		   		
-                	SmsManager sms = SmsManager.getDefault();
-                	String ar = MainActivity.txtAutoReply.getText().toString();
-                	oldSMS=PhoneNoRec;
-                	sms.sendTextMessage(PhoneNoRec, null, ar, null, null);          	
+                    	SmsManager sms = SmsManager.getDefault();
+                    	String ar = MainActivity.txtAutoReply.getText().toString();
+                    	oldSMS=PhoneNoRec;
+                    	sms.sendTextMessage(PhoneNoRec, null, ar, null, null);          	
                     	
                 //If Auto_Reply switch off, oldSMS is reset to be null. So, if no other number call in, 
                 //the same number will not be blocked when next time Auto_reply is on.

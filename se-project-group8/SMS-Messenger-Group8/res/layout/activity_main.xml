@@ -136,19 +136,25 @@
 	        android:text="ToggleButton"
 	        android:textOff="Auto_Reply is off"
 	        android:textOn="Auto_Reply is on" />
-	    
+
+	    <Button
+	        android:id="@+id/btnInbox"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Get into Inbox" />
+
+        <Button
+            android:id="@+id/changeDefaultApp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Set as default SMS app"
+            android:visibility="gone" />
+
 	    <TextView
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:text=""
 	        android:background="#ffffffff" />
-	    
-	    <Button 
-	        android:id="@+id/btnInbox"  
-	        android:layout_width="fill_parent" 
-	        android:layout_height="wrap_content"
-	        android:text="Get into Inbox"
-	        />
 	    
 	    <TextView
 	        android:layout_width="fill_parent"
