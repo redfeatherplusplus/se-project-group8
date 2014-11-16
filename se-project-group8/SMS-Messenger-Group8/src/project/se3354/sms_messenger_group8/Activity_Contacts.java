@@ -23,11 +23,15 @@ import android.widget.Button;
 
 public class Activity_Contacts extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+	public static final int MAIN_ACTIVITY = 256;
+	public static final int ACTIVITY_MULTISEND = 255;
 	public static final String NO_NUMBER = "0";
 	public static final String HAS_NUMBER = "1";
+	public static int caller = 0;
 	
 	Button btnReturn;
 	ListView ContactsList;
+	int getContactsFor = 0;
 	
     /* Called when the activity is first created. */
 	
@@ -56,7 +60,7 @@ public class Activity_Contacts extends Activity implements LoaderManager.LoaderC
     private String mSearchString = "0";
     // Defines the array to hold values that replace the ?
     private String[] mSelectionArgs = { mSearchString, mSearchString };
-	    
+    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -98,11 +102,16 @@ public class Activity_Contacts extends Activity implements LoaderManager.LoaderC
 	                		Toast.LENGTH_LONG).show();
 				}
 				else {
+					
 					//get phone number which is at index 2 of PROJECTION
 					String phoneNumber = Contact.getString(2); 
-					
-					//set text to be the phoneNumber and return to MainActvity
-					MainActivity.txtPhoneNo.setText(phoneNumber);
+
+					if(caller == MAIN_ACTIVITY) {
+						MainActivity.txtPhoneNo.setText(phoneNumber);
+					}
+					else if(caller == ACTIVITY_MULTISEND) {
+						Activity_MultiSend.phoneNoEdit.setText(phoneNumber);
+					}
 	                finish();
 				}
 			}

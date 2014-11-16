@@ -17,13 +17,32 @@
 	    
 	    android:layout_alignParentTop="true"
 	    android:layout_centerHorizontal="true" />
-		<Button
-		    android:id="@+id/addTaskBtn"
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:text="Add To List"
-		    android:layout_below="@+id/editText"
-		    android:layout_alignParentLeft="true" />
+
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+	    </LinearLayout>
+
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+
+	        <Button
+	            android:id="@+id/addTaskBtn"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="0.50"
+	            android:text="Add To List" />
+
+	        <Button
+	            android:id="@+id/addFromContacts"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="0.50"
+	            android:text="From Contacts" />
+
+	    </LinearLayout>
+
 		<TextView
 		    android:layout_width="fill_parent"
 		    android:layout_height="wrap_content"
@@ -41,29 +60,26 @@
 		    android:layout_below="@+id/header"
 		    android:layout_centerHorizontal="true" />
 		
-		
 		<LinearLayout
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    >
-			<Button
-	                android:id="@+id/btnSendMulti"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:layout_alignParentBottom="true"
-	                android:layout_weight="1"
-	                android:text="Send and go back"
-	                />
-			<Button
-	                android:id="@+id/btnBack"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:layout_alignParentBottom="true"
-	                android:layout_weight="1"
-	                android:text="Discard"
-	                />
-		
-		</LinearLayout>	
+		    android:layout_width="fill_parent"
+		    android:layout_height="match_parent" >
+
+		    <Button
+		        android:id="@+id/btnSendMulti"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentBottom="true"
+		        android:layout_weight="0.50"
+		        android:text="Send" />
+
+		    <Button
+		        android:id="@+id/btnBack"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="0.50"
+		        android:text="Discard" />
+
+		</LinearLayout>
 			
 		<TextView
 		    android:layout_width="fill_parent"

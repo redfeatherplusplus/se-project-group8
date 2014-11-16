@@ -3,32 +3,43 @@ package project.se3354.sms_messenger_group8;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
-import project.se3354.sms_messenger_group8.Activity_Inbox.NewMessageReceiver;
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.database.Cursor;
+import android.app.ActionBar.LayoutParams;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ProgressBar;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
+import android.app.LoaderManager;
+import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.CursorLoader;
+import android.content.IntentFilter;
+import android.content.Loader;
+import android.database.Cursor;
+import android.app.Activity;
+import android.content.Intent;
+import android.widget.Button;
 
-public class Activity_Conversation extends Activity {
-
+public class Activity_Drafts extends Activity implements LoaderManager.LoaderCallbacks<ArrayList<MyMessage>>{
+	
 	public static final String DRAFT = "3";
 	public static final String USERSENT = "2";
-	public static final String RECIEVED = "1";
+	public static final String RECEIVED = "1";
 	
 	// Search EditText
     EditText inputSearch;
@@ -44,55 +55,79 @@ public class Activity_Conversation extends Activity {
 	//This is the Adapter being used to display the list's data
 	private ContactsAdapter mAdapter = null;
 	private ArrayList<MyMessage> smsList = null;
-	private NewMessageReceiver newMessageSignal = null;
 	
-	//Create String Value of the Phone Number of other Person in Conversation
-	private String convAddress;
-	private String contactName;
+	// These are the Contacts rows that we will retrieve
+	static final String[] PROJECTION = new String[] {ContactsContract.Data._ID,
+	    ContactsContract.Data.DISPLAY_NAME};
+	
+	// This is the select criteria
+	static final String SELECTION = "((" + 
+	    ContactsContract.Data.DISPLAY_NAME + " NOTNULL) AND (" +
+	    ContactsContract.Data.DISPLAY_NAME + " != '' ))";
 	    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//get data from inbox
-		convAddress = getIntent().getStringExtra("convAddress");
-		
-		//get name of contact if it exists
-    	contactName = getContactName(convAddress);
-		
-		// match views with their xml ids
-		setContentView(R.layout.activity_conversation);
+		setContentView(R.layout.activity_inbox);
 		messagesList = (ListView) findViewById(R.id.MessagesList);
 	    btnReturn = (Button) findViewById(R.id.btnReturn);
 	    inputSearch = (EditText) findViewById(R.id.inputSearch);
 	    
-		// Create a progress bar to display while the list loads
+	    // Create a progress bar to display while the list loads
 	    messagesList.setEmptyView(findViewById(R.id.loadingScreen));
 	    
 	    // fill the list with sms messages
 	    smsList = new ArrayList<MyMessage>();
 	    smsListGenerate();
-	    
-	    // Create a receiver to update the conversation
-	    IntentFilter filterState = new IntentFilter("Conversation.updateActivity");
-	    newMessageSignal = new NewMessageReceiver();
-	    registerReceiver(newMessageSignal, filterState);
-	    
+		
 		// Create an empty adapter we will use to display the loaded data.
 		// We pass null for the cursor, then update it in onLoadFinished()
-		mAdapter = new ContactsAdapter(Activity_Conversation.this, 
+		mAdapter = new ContactsAdapter(Activity_Drafts.this, 
 				R.layout.message_layout, smsList);
 		messagesList.setAdapter(mAdapter);
 		
-		/* Action when click on Contact Item */
+		/* Action when click on Draft Item */
 		messagesList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				//do something, maybe implement deleting messages?
+				//set message body and phone number to the select drafts
+				String address = smsList.get(position).getPhoneNumber();
+				String body = smsList.get(position).getMessageBody();
+				MainActivity.txtPhoneNo.setText(address);
+				MainActivity.txtMessage.setText(body);
+				
+				//delete that draft and return to the main layout
+				//main_activity will save the draft again if it is not sent or cleared
+				//so we want to delete it to avoid creating duplicates
+				String _id = smsList.get(position).getMessageId();
+				Context context = view.getContext();
+				deleteMessage(context, _id);
+				finish();
 			}
 		}); 
-		
-		//Search function removed from conversation view
+
+	    /* Adding search functionality*/
+		inputSearch.addTextChangedListener(new TextWatcher() {
+	        
+	        @Override
+	        public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+	            // When user changed the Text
+	            mAdapter.getFilter().filter(cs.toString()); 
+	        }
+	         
+	        @Override
+	        public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+	                int arg3) {
+	            // TODO Auto-generated method stub
+	             
+	        }
+	         
+	        @Override
+	        public void afterTextChanged(Editable arg0) {
+	            // TODO Auto-generated method stub                         
+	        }
+	    });
 		
 	    /* Action when click "Return" button */
 	    btnReturn.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +137,8 @@ public class Activity_Conversation extends Activity {
 	            finish();
 	        }
 	    });
-		
+	    
+		getLoaderManager().initLoader(0, null, this).forceLoad();
 	}
 	
 	public void smsListGenerate() {
@@ -115,13 +151,10 @@ public class Activity_Conversation extends Activity {
         if(c.moveToFirst()) {
         	String messageType;
             for(int i=0; i < c.getCount(); i++) {
-                MyMessage sms = new MyMessage();	//Create new message to be populated
-                //Create variable to store address of current message being queried
-                //String address = (c.getString(c.getColumnIndexOrThrow("address")).toString());		
+                MyMessage sms = new MyMessage();
                 messageType = c.getString(c.getColumnIndexOrThrow("type")).toString();
                 
-                //create an sms with properly filled datafields
-                if (DRAFT.equals(messageType)) {
+                if(DRAFT.equals(messageType)) {
                 	// address is null for drafts, because of this we need to find the phone number
                 	// by searching "content://mms-sms/canonical-addresses" with our thread_id
                 	String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id")).toString();
@@ -135,30 +168,37 @@ public class Activity_Conversation extends Activity {
 	                sms.setMessageId(c.getString(c.getColumnIndexOrThrow("_id")).toString());
 	                sms.setMessageType(messageType);
 	               	sms.isDraft(true);
+	               	smsList.add(sms);
                 } 
-                else {
-                	sms.setPhoneNumber(c.getString(c.getColumnIndexOrThrow("address")).toString());
-	                
-	                // date needs to be formatted from primitive long datatype
-                	String messageDate = SimplifyDate(c.getLong(c.getColumnIndexOrThrow("date")));
-	               	sms.setMessageDate(messageDate);
-	               	
-                	sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
-	                sms.setMessageId(c.getString(c.getColumnIndexOrThrow("_id")).toString());
-	                sms.setMessageType(messageType);
-                }
-                //only add message if address is convAddress.
-                if (sms.getPhoneNumber().equals(convAddress))
-                {
-                	//replace phone number with contact name
-                	sms.setContactName(contactName);
-                	smsList.add(sms);
-                }
                 
+                //display phonenumber while contactName loads
+                sms.setContactName(sms.getPhoneNumber());
                	c.moveToNext();
            	}
        	}
        	c.close();
+	}
+	
+	public void deleteMessage(Context context, String _id){
+		 try {
+		        Uri deleterUri = Uri.parse("content://sms");
+		        Cursor c = context.getContentResolver().query(deleterUri,
+		            new String[] { "_id", "thread_id", "address",
+		                "person", "date", "body" }, null, null, null);
+
+		        if (c != null && c.moveToFirst()) {
+		            do {
+		                String id = String.valueOf(c.getLong(0));
+
+		                if (_id.equals(id)) {
+		                    context.getContentResolver().delete(
+		                        Uri.parse("content://sms/" + id), null, null);
+		                }
+		            } while (c.moveToNext());
+		        }
+		    } catch (Exception e) {
+		    	e.printStackTrace();
+		    }
 	}
 	
 	public String getAddressFromThreadID(String thread_id)
@@ -219,27 +259,31 @@ public class Activity_Conversation extends Activity {
 		}
 		return(month_day.format(messageDate));
     }
-	//inner broadcaster to receive messages
-	public class NewMessageReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-        	// update the inbox, save searchbox during update
-	        // String SearchBox = inputSearch.getText().toString();
-            mAdapter.clear();
-            smsListGenerate();
-            
-            // create a new message filter since the database changed
-            mAdapter = new ContactsAdapter(Activity_Conversation.this, 
-    				R.layout.message_layout, smsList);
-            mAdapter.notifyDataSetChanged();
-    		messagesList.setAdapter(mAdapter);
-	        // inputSearch.setText(SearchBox);
-		}
-	}
+	
+    public void stopLoading() {
+    	getLoaderManager().getLoader(0).stopLoading();
+    }
+    
+    public void restartLoading() {
+    	getLoaderManager().restartLoader(0, null, this).forceLoad();
+    }
+	
 	@Override
-    protected void onDestroy() {
-	    unregisterReceiver(newMessageSignal);
-		super.onDestroy();
+	public Loader<ArrayList<MyMessage>> onCreateLoader(int id, Bundle args) {
+		// TODO Auto-generated method stub
+		return new ContactNameLoader(this, smsList);
 	}
 
+	@Override
+	public void onLoadFinished(Loader<ArrayList<MyMessage>> loader, ArrayList<MyMessage> data) {
+		// TODO Auto-generated method stub
+        mAdapter.notifyDataSetChanged();
+		
+	}
+
+	@Override
+	public void onLoaderReset(Loader<ArrayList<MyMessage>> loader) {
+		// TODO Auto-generated method stub
+        mAdapter.notifyDataSetChanged();
+	}
 }

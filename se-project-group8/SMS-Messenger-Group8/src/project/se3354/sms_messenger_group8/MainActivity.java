@@ -31,8 +31,11 @@ import java.util.Date;
 
 public class MainActivity extends Activity 
 {
+	public static final int MAIN_ACTIVITY = 256;
+	public static final int ACTIVITY_MULTISEND = 255;
 	public static EditText txtAutoReply;
 	public static EditText txtPhoneNo;
+	public static EditText txtMessage;
 	
 	Button btnFindContactNo;
 	Button btnAddMoreNo;
@@ -44,7 +47,6 @@ public class MainActivity extends Activity
 	Button btnForward;
 	Button btnReply;
 	Button btnEdit;
-	EditText txtMessage;
 	ToggleButton toggleBtnAutoReply;
 	
 	static TextView txtReceive;
@@ -82,6 +84,7 @@ public class MainActivity extends Activity
         btnFindContactNo.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) { 
+	    		Activity_Contacts.caller = MAIN_ACTIVITY;
             	Intent myIntent = new Intent(v.getContext(), Activity_Contacts.class);
                 startActivityForResult(myIntent, 0);
             }
@@ -131,7 +134,6 @@ public class MainActivity extends Activity
             }
         });
         
-                
         /* Action when click "Save Draft" button */             
         btnSaveDraft.setOnClickListener(new View.OnClickListener() 
         {
@@ -172,6 +174,16 @@ public class MainActivity extends Activity
                 startActivityForResult(myIntent, 0);
             }
         });
+        
+        /* Action when click "Open Draft" button.--- Main layout-->Draft layout----*/             
+        btnOpenDraft.setOnClickListener(new View.OnClickListener() 
+        {
+            public void onClick(View v) {
+            	Intent myIntent = new Intent(v.getContext(), Activity_Drafts.class);
+                startActivityForResult(myIntent, 0);
+            }
+        });
+        
         // Action for Auto_Reply button. 
         toggleBtnAutoReply.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -187,6 +199,7 @@ public class MainActivity extends Activity
                 }
             }
         });
+        
         // Action for Forward button. It will fill phone number field and leave message empty
         btnForward.setOnClickListener(new View.OnClickListener() 
         {
@@ -200,7 +213,8 @@ public class MainActivity extends Activity
            	 }
             }
         });
-     // Action for Reply button. It will fill message field and leave phone number empty
+        
+        // Action for Reply button. It will fill message field and leave phone number empty
         btnReply.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) {
@@ -212,7 +226,8 @@ public class MainActivity extends Activity
 	            }
             }
         });
-     // Action for Edit button.It will fill both phone number and message fields
+        
+        // Action for Edit button.It will fill both phone number and message fields
         btnEdit.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) {
@@ -227,7 +242,6 @@ public class MainActivity extends Activity
             	
             }
         });
-
     }
     
     @Override
@@ -236,8 +250,6 @@ public class MainActivity extends Activity
         
         //create a package manger to enable and disable broadcast receivers as needed
         PackageManager pm = getPackageManager();
-        ComponentName defaultSmsReceiver = new ComponentName(getApplicationContext(), 
-        		Activity_Receiver.class);
         ComponentName nonDefaultReceiver = new ComponentName(getApplicationContext(), 
         		Activity_Receiver_NonDefault.class);
         
@@ -276,7 +288,6 @@ public class MainActivity extends Activity
         }
     }
 
-    
     /* Method of sending a message to another device */
     public void sendSMS(String phoneNumber, String message)
     {  

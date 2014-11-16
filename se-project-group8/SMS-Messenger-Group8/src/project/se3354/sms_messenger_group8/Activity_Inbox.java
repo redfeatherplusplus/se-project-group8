@@ -164,6 +164,7 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	               	sms.setMessageDate(messageDate);
                 	
 	                sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
+	                sms.setMessageId(c.getString(c.getColumnIndexOrThrow("_id")).toString());
 	                sms.setMessageType(messageType);
 	               	sms.isDraft(true);
 	               	smsList.add(sms);
@@ -176,6 +177,7 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	               	sms.setMessageDate(messageDate);
 	               	
                 	sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
+	                sms.setMessageId(c.getString(c.getColumnIndexOrThrow("_id")).toString());
                     sms.setMessageType(messageType);
 	               	smsList.add(sms);
                 }

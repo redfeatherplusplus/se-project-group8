@@ -46,6 +46,7 @@
         <activity android:name=".Activity_Inbox"></activity>
         <activity android:name=".Activity_Contacts"></activity>
         <activity android:name=".Activity_Conversation"></activity>
+        <activity android:name=".Activity_Drafts"></activity>
         
         <!--========================================================================================-->    
         <!-- The following classes are dummy classes required to set the SMS app as the default app -->   
@@ -76,8 +77,8 @@
             </intent-filter>
         </receiver>
 
-        <!-- Activity that allows the user to send new SMS/MMS messages -->
-        <activity android:name=".SendTo_Activity" >
+        <!-- Activity that allows the user to send mutliple SMS/MMS messages -->
+        <activity android:name=".Activity_MultiSend" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />                
                 <action android:name="android.intent.action.SENDTO" />
