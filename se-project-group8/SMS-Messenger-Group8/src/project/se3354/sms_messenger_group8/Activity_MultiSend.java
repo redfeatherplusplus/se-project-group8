@@ -99,13 +99,15 @@ public class Activity_MultiSend extends Activity {
 	    	      
 	                
 	            }
-	    	    //After sending, go back to main layout
-	    	    Intent myIntent = new Intent(v.getContext(), MainActivity.class);
-                startActivityForResult(myIntent, 0);
+	    	    //After sending, go back to main layout---replaced by finish()
+	    	    //Intent myIntent = new Intent(v.getContext(), MainActivity.class);
+                //startActivityForResult(myIntent, 0);
               //Add time and date at the end
                 Date resultdate = new Date(System.currentTimeMillis());
-                MainActivity.txtReceive.setText("SMS sent to "+phoneNumber + ": "
+                MainActivity mainActivity = new MainActivity();
+                mainActivity.txtReceive.setText("SMS sent to "+phoneNumber + ": "
                 		+"\n"+"["+ message+"]\n"+ resultdate);
+                finish();
 	    	}
 	    });
 	}
