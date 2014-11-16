@@ -35,6 +35,7 @@ public class MainActivity extends Activity
 	public static EditText txtPhoneNo;
 	
 	Button btnFindContactNo;
+	Button btnAddMoreNo;
 	Button btnSendSMS;
 	Button btnScheduleSend;
 	Button btnSaveDraft;
@@ -59,6 +60,7 @@ public class MainActivity extends Activity
         setContentView(R.layout.activity_main);
         
         btnFindContactNo = (Button) findViewById(R.id.btnFindContactNo); 
+        btnAddMoreNo = (Button) findViewById(R.id.btnAddMoreNo);
         btnSendSMS = (Button) findViewById(R.id.btnSendSMS);
         btnScheduleSend = (Button) findViewById(R.id.btnScheduleSend);
         btnInbox = (Button) findViewById(R.id.btnInbox);
@@ -81,6 +83,15 @@ public class MainActivity extends Activity
         {
             public void onClick(View v) { 
             	Intent myIntent = new Intent(v.getContext(), Activity_Contacts.class);
+                startActivityForResult(myIntent, 0);
+            }
+        });
+        
+        /* Action when click "Add More" button */ 
+        btnAddMoreNo.setOnClickListener(new View.OnClickListener() 
+        {
+            public void onClick(View v) { 
+            	Intent myIntent = new Intent(v.getContext(), Activity_MultiSend.class);
                 startActivityForResult(myIntent, 0);
             }
         });
