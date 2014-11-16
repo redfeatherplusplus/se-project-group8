@@ -138,31 +138,37 @@ public class MainActivity extends Activity
         btnSaveDraft.setOnClickListener(new View.OnClickListener() 
         {
         	public void onClick(View v) { 
-        		ContentValues values = new ContentValues();
-        		String phoneNo = txtPhoneNo.getText().toString();
-            	String message = txtMessage.getText().toString();
-            	//phone number has to be there before saving draft
-            	if (phoneNo.length()>0) {               
-            		Date resultdate = new Date(System.currentTimeMillis());
-                    /*Write newly sent message in the TextView box*/
-                    txtReceive.setText("Saved draft for SMS sending to " + "<" + phoneNo + "> : "
-                    		+"\n"+"["+message+"]\n"+resultdate);
-                    
-                    //Clear phone number box and message box after Sending
-                    txtPhoneNo.setText(null);
-                    txtMessage.setText(null);
-                    
-                    saveDraft(phoneNo, message);
-	        		
-	        		//state that message was saved as a draft
-                	Toast.makeText(getBaseContext(), "Message saved as draft.", 
-                            Toast.LENGTH_LONG).show();
-            	}
-            	//phone number has to be there, if not, report error
-            	else {
-                	Toast.makeText(getBaseContext(), "Phone number cannot be empty", 
+        		//if this is the default sms app we can save drafts
+        		if (Utils.isDefaultSmsApp(v.getContext())) {
+            		String phoneNo = txtPhoneNo.getText().toString();
+                	String message = txtMessage.getText().toString();
+                	//phone number has to be there before saving draft
+                	if (phoneNo.length()>0) {               
+                		Date resultdate = new Date(System.currentTimeMillis());
+                        /*Write newly sent message in the TextView box*/
+                        txtReceive.setText("Saved draft for SMS sending to " + "<" + phoneNo + "> : "
+                        		+"\n"+"["+message+"]\n"+resultdate);
+                        
+                        //Clear phone number box and message box after Sending
+                        txtPhoneNo.setText(null);
+                        txtMessage.setText(null);
+                        
+                        saveDraft(phoneNo, message);
+    	        		
+    	        		//state that message was saved as a draft
+                    	Toast.makeText(getBaseContext(), "Message saved as draft.", 
                         Toast.LENGTH_LONG).show();
-                }
+                	}
+                	//phone number has to be there, if not, report error
+                	else {
+                    	Toast.makeText(getBaseContext(), "Phone number cannot be empty", 
+                        Toast.LENGTH_LONG).show();
+                    }
+        		}
+        		else {
+        			Toast.makeText(getBaseContext(), "Must be default sms app save drafts", 
+                    Toast.LENGTH_LONG).show();
+        		}
             }
         });
         
@@ -179,8 +185,15 @@ public class MainActivity extends Activity
         btnOpenDraft.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) {
-            	Intent myIntent = new Intent(v.getContext(), Activity_Drafts.class);
-                startActivityForResult(myIntent, 0);
+        		//if this is the default sms app we can save drafts
+        		if (Utils.isDefaultSmsApp(v.getContext())) {
+                	Intent myIntent = new Intent(v.getContext(), Activity_Drafts.class);
+                    startActivityForResult(myIntent, 0);
+        		}
+        		else {
+                	Toast.makeText(getBaseContext(), "Must be default sms app edit drafts", 
+                	Toast.LENGTH_LONG).show();
+        		}
             }
         });
         
@@ -285,6 +298,36 @@ public class MainActivity extends Activity
             Button button = (Button) findViewById(R.id.changeDefaultApp);
             button.setVisibility(View.GONE);
             button.setEnabled(false);
+        }
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        
+        //if the current app is the stock app, save messages as a draft.
+        final String myPackageName = getPackageName();
+        if (Telephony.Sms.getDefaultSmsPackage(this).equals(myPackageName)) {
+        	String phoneNo = txtPhoneNo.getText().toString();
+        	String message = txtMessage.getText().toString();
+        	//phone number has to be there before saving draft
+        	//message body must also be nonempty for auto-draft save
+        	if (phoneNo.length()>0 && message.length()>0) {               
+        		Date resultdate = new Date(System.currentTimeMillis());
+                /*Write newly sent message in the TextView box*/
+                txtReceive.setText("Saved draft for SMS sending to " + "<" + phoneNo + "> : "
+                		+"\n"+"["+message+"]\n"+resultdate);
+                
+                //Clear phone number box and message box after saving
+                txtPhoneNo.setText(null);
+                txtMessage.setText(null);
+                
+                saveDraft(phoneNo, message);
+        		
+        		//state that message was saved as a draft
+            	Toast.makeText(getBaseContext(), "Message saved as draft.", 
+                        Toast.LENGTH_LONG).show();
+        	}
         }
     }
 
