@@ -141,7 +141,7 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
 		getLoaderManager().initLoader(0, null, this).forceLoad();
 	}
 	
-	public void smsListGenerate() {
+	public synchronized void smsListGenerate() {
 		// Create a uri to get all sms messages
 	    Uri smsURI = Uri.parse("content://sms");
 	    Cursor c= getContentResolver().query(smsURI, null, null ,null,null);
@@ -176,7 +176,6 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
                	c.moveToNext();
            	}
        	}
-       	c.close();
 	}
 	
 	public void deleteMessage(Context context, String _id){
@@ -226,7 +225,6 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
                	cr.moveToNext();
            	}
        	}
-       	cr.close();
        	
        	return (address);
     }

@@ -158,7 +158,6 @@ public class Activity_Conversation extends Activity {
                	c.moveToNext();
            	}
        	}
-       	c.close();
 	}
 	
 	public String getAddressFromThreadID(String thread_id)
@@ -186,8 +185,6 @@ public class Activity_Conversation extends Activity {
                	cr.moveToNext();
            	}
        	}
-       	cr.close();
-       	
        	return (address);
     }
 	

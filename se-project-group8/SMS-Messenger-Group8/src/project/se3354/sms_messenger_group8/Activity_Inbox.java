@@ -102,7 +102,6 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 				String convAddress = smsList.get(position).getPhoneNumber();
                 displayConv.putExtra("convAddress", convAddress);
 				startActivity(displayConv);
-				finish();
 			}
 		}); 
 
@@ -186,7 +185,6 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
                	c.moveToNext();
            	}
        	}
-       	c.close();
 	}
 	
 	public String getAddressFromThreadID(String thread_id)
@@ -214,8 +212,6 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
                	cr.moveToNext();
            	}
        	}
-       	cr.close();
-       	
        	return (address);
     }
 	
