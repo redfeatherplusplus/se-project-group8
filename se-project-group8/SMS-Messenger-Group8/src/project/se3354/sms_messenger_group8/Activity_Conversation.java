@@ -17,11 +17,17 @@ import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class Activity_Conversation extends Activity {
@@ -29,6 +35,8 @@ public class Activity_Conversation extends Activity {
 	public static final String DRAFT = "3";
 	public static final String USERSENT = "2";
 	public static final String RECIEVED = "1";
+	public static final int TRUE = 1;
+	public static final int FALSE = 0;
 	
 	// Search EditText
     EditText inputSearch;
@@ -58,6 +66,7 @@ public class Activity_Conversation extends Activity {
 		
 		//get name of contact if it exists
     	contactName = getContactName(convAddress);
+
 		
 		// match views with their xml ids
 		setContentView(R.layout.activity_conversation);
@@ -67,6 +76,9 @@ public class Activity_Conversation extends Activity {
 	    
 		// Create a progress bar to display while the list loads
 	    messagesList.setEmptyView(findViewById(R.id.loadingScreen));
+
+	    // register the delete menu
+	    registerForContextMenu(messagesList);
 	    
 	    // fill the list with sms messages
 	    smsList = new ArrayList<MyMessage>();
@@ -233,10 +245,83 @@ public class Activity_Conversation extends Activity {
 	        // inputSearch.setText(SearchBox);
 		}
 	}
+	
 	@Override
     protected void onDestroy() {
 	    unregisterReceiver(newMessageSignal);
 		super.onDestroy();
+	}
+	/* Action when long click on Contact Item */
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+	                                ContextMenuInfo menuInfo) {
+		//if this is the default sms app we can delete messages
+		if (Utils.isDefaultSmsApp(v.getContext())) {
+		    super.onCreateContextMenu(menu, v, menuInfo);
+		    menu.setHeaderTitle("Delete Message?");
+		    MenuInflater inflater = this.getMenuInflater();
+		    inflater.inflate(R.menu.menu_delete, menu);
+		}
+		else {
+        	Toast.makeText(getBaseContext(), "Must be default sms app to delete messages", 
+        	Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+	    switch (item.getItemId()) {
+	        case R.id.yes_delete:
+				// delete the selected message
+				String _id = smsList.get(info.position).getMessageId();
+	        	deleteMessage(this.getApplicationContext(), _id);
+            	Toast.makeText(getBaseContext(), "Message Deleted", 
+                        Toast.LENGTH_LONG).show();
+            	
+	        	// update the inbox, save searchbox during update
+		        //String SearchBox = inputSearch.getText().toString();
+	            mAdapter.clear();
+	            smsListGenerate();
+	            
+	            // create a new message filter since the database changed
+	            mAdapter = new ContactsAdapter(Activity_Conversation.this, 
+	    				R.layout.message_layout, smsList);
+	            mAdapter.notifyDataSetChanged();
+	    		messagesList.setAdapter(mAdapter);
+		        //inputSearch.setText(SearchBox);
+	    		
+	    		//notify the inbox that the data was changed
+	    		Activity_Inbox.dataChanged = TRUE;
+	            return true;
+	        case R.id.no_delete:
+	        	System.out.println(info.position);
+	            return true;
+	        default:
+	            return super.onContextItemSelected(item);
+	    }
+	}
+	
+	public void deleteMessage(Context context, String _id){
+		 try {
+		        Uri deleterUri = Uri.parse("content://sms");
+		        Cursor c = context.getContentResolver().query(deleterUri,
+		            new String[] { "_id", "thread_id", "address",
+		                "person", "date", "body" }, null, null, null);
+
+		        if (c != null && c.moveToFirst()) {
+		            do {
+		                String id = String.valueOf(c.getLong(0));
+
+		                if (_id.equals(id)) {
+		                    context.getContentResolver().delete(
+		                        Uri.parse("content://sms/" + id), null, null);
+		                }
+		            } while (c.moveToNext());
+		        }
+		    } catch (Exception e) {
+		    	e.printStackTrace();
+		    }
 	}
 
 }

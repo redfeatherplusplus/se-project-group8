@@ -12,10 +12,15 @@ import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -35,11 +40,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.widget.Button;
 
-public class Activity_Inbox extends Activity implements LoaderManager.LoaderCallbacks<ArrayList<MyMessage>>{
+public class Activity_Inbox extends Activity implements LoaderManager.LoaderCallbacks<ArrayList<MyMessage>> {
 	
 	public static final String DRAFT = "3";
 	public static final String USERSENT = "2";
 	public static final String RECEIVED = "1";
+	public static final int TRUE = 1;
+	public static final int FALSE = 0;
+	public static int dataChanged = 0;
 	
 	// Search EditText
     EditText inputSearch;
@@ -77,6 +85,9 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	    // Create a progress bar to display while the list loads
 	    messagesList.setEmptyView(findViewById(R.id.loadingScreen));
 	    
+	    // register the delete menu
+	    registerForContextMenu(messagesList);
+	    
 	    // fill the list with sms messages
 	    smsList = new ArrayList<MyMessage>();
 	    smsListGenerate();
@@ -104,6 +115,8 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 				startActivity(displayConv);
 			}
 		}); 
+		
+		/* Action when long click on Contact Item */
 
 	    /* Adding search functionality*/
 		inputSearch.addTextChangedListener(new TextWatcher() {
@@ -276,10 +289,113 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 		}
 	}
 
+	/* Action when long click on Contact Item */
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+	                                ContextMenuInfo menuInfo) {
+		//if this is the default sms app we can delete messages
+		if (Utils.isDefaultSmsApp(v.getContext())) {
+		    super.onCreateContextMenu(menu, v, menuInfo);
+		    menu.setHeaderTitle("Delete Message?");
+		    MenuInflater inflater = this.getMenuInflater();
+		    inflater.inflate(R.menu.menu_delete, menu);
+		}
+		else {
+        	Toast.makeText(getBaseContext(), "Must be default sms app to delete messages", 
+        	Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+	    switch (item.getItemId()) {
+	        case R.id.yes_delete:
+				// stop the loader
+				stopLoading();
+				
+				// delete the selected message
+				String _id = smsList.get(info.position).getMessageId();
+	        	deleteMessage(this.getApplicationContext(), _id);
+            	Toast.makeText(getBaseContext(), "Message Deleted", 
+                        Toast.LENGTH_LONG).show();
+            	
+	        	// update the inbox, save searchbox during update
+		        String SearchBox = inputSearch.getText().toString();
+	            mAdapter.clear();
+	            smsListGenerate();
+	            
+	            // create a new message filter since the database changed
+	            mAdapter = new ContactsAdapter(Activity_Inbox.this, 
+	    				R.layout.message_layout, smsList);
+	            mAdapter.notifyDataSetChanged();
+	    		messagesList.setAdapter(mAdapter);
+		        inputSearch.setText(SearchBox);
+
+		        //reset the loader
+			    restartLoading();
+	            return true;
+	        case R.id.no_delete:
+	        	System.out.println(info.position);
+	            return true;
+	        default:
+	            return super.onContextItemSelected(item);
+	    }
+	}
+	
+	public void deleteMessage(Context context, String _id){
+		 try {
+		        Uri deleterUri = Uri.parse("content://sms");
+		        Cursor c = context.getContentResolver().query(deleterUri,
+		            new String[] { "_id", "thread_id", "address",
+		                "person", "date", "body" }, null, null, null);
+
+		        if (c != null && c.moveToFirst()) {
+		            do {
+		                String id = String.valueOf(c.getLong(0));
+
+		                if (_id.equals(id)) {
+		                    context.getContentResolver().delete(
+		                        Uri.parse("content://sms/" + id), null, null);
+		                }
+		            } while (c.moveToNext());
+		        }
+		    } catch (Exception e) {
+		    	e.printStackTrace();
+		    }
+	}
+
 	@Override
     protected void onDestroy() {
 	    unregisterReceiver(newMessageSignal);
 		super.onDestroy();
+	}
+	
+	@Override
+    protected void onResume() {
+	    if (dataChanged == TRUE) {
+			// stop the loader
+			stopLoading();
+			
+        	// update the inbox, save searchbox during update
+	        String SearchBox = inputSearch.getText().toString();
+            mAdapter.clear();
+            smsListGenerate();
+            
+            // create a new message filter since the database changed
+            mAdapter = new ContactsAdapter(Activity_Inbox.this, 
+    				R.layout.message_layout, smsList);
+            mAdapter.notifyDataSetChanged();
+    		messagesList.setAdapter(mAdapter);
+	        inputSearch.setText(SearchBox);
+	        
+	        //reset the loader
+		    restartLoading();
+		    
+		    //reset dataChanged to false
+		    dataChanged = FALSE;
+	    }
+		super.onResume();
 	}
 	
 	@Override
