@@ -41,6 +41,9 @@ public class Activity_AlarmReciever extends BroadcastReceiver
                 	MainActivity.btnScheduleSend.setTextColor(-16777216);
                     
                 	Activity_ScheduleSend.txtTime.setText("Scheduled SMS has been sent!!!");
+                	Activity_ScheduleSend2.textView2.setText("Scheduled SMS has been sent!!! \n Please go back.");
+                	
+                	
                 	
                     
                    

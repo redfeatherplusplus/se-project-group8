@@ -134,6 +134,12 @@ public class Activity_ScheduleSend extends Activity {
 	        Toast.makeText(this, "Scheduled SMS: \n" + sendTime, Toast.LENGTH_LONG).show();
 	        
 	        txtTime.setText("Scheduled SMS: \n"+sendTime);
+	        
+	      //Go back to clean main page
+			Intent myIntent = new Intent(V.getContext(), Activity_ScheduleSend2.class);
+	        startActivityForResult(myIntent, 0);
+	        
+	        finish();
         }
          
     }
