@@ -87,7 +87,7 @@ public class Activity_MultiSend extends Activity {
 	    	public void onClick(View v)
 	    	{
 	    		String message = txtMessage.getText().toString();
-	    		String phoneNumber = null;
+	    		String phoneNumber ="";
 	    	    if(list.size() > 0)//No less than one phone number is in list
 	    	    {
 	    	        for(int i=0; i<list.size(); i++){
@@ -105,6 +105,8 @@ public class Activity_MultiSend extends Activity {
                 MainActivity mainActivity = new MainActivity();
                 mainActivity.txtReceive.setText("SMS sent to "+phoneNumber + ": "
                 		+"\n"+"["+ message+"]\n"+ resultdate);
+                mainActivity.txtPhoneNo.setText("");
+                mainActivity.txtMessage.setText("");
                 //After sending, go back to main layout---replaced by finish()
 	    	    //Intent myIntent = new Intent(v.getContext(), MainActivity.class);
                 //startActivityForResult(myIntent, 0);

@@ -6,5 +6,6 @@
     <string name="title_activity_activity__multi_send">Activity_MultiSend</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_activity__schedule_send">Activity_ScheduleSend</string>
+    <string name="title_activity_activity__schedule_send2">Activity_ScheduleSend2</string>
 
 </resources>

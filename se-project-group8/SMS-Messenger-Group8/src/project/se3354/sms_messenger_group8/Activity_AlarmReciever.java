@@ -28,7 +28,7 @@ public class Activity_AlarmReciever extends BroadcastReceiver
                     laterSend.sendSMS("5556", "message");
                     */
                     
-                    Toast.makeText(context, "Alarm Triggered and SMS Sent", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Scheduled SMS has been Sent", Toast.LENGTH_SHORT).show();
                     //Clear SendLater information
                     Activity_ScheduleSend.txtNumber.setText("");
                     Activity_ScheduleSend.txtText.setText("");
@@ -37,6 +37,14 @@ public class Activity_AlarmReciever extends BroadcastReceiver
                     Activity_ScheduleSend.txtMin.setText("");
                     Activity_ScheduleSend.txtSec.setText("");
                     
+                    MainActivity.btnScheduleSend.setText("Send Later");
+                	MainActivity.btnScheduleSend.setTextColor(-16777216);
+                    
+                	Activity_ScheduleSend.txtTime.setText("Scheduled SMS has been sent!!!");
+                	
+                    
+                   
              }
+         
       
 }

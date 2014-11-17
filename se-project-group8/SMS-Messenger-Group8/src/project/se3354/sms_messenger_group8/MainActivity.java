@@ -50,7 +50,7 @@ public class MainActivity extends Activity
 	Button btnAddContact;
 	Button btnAddMoreNo;
 	Button btnSendSMS;
-	Button btnScheduleSend;
+	static Button btnScheduleSend;
 	Button btnSaveDraft;
 	Button btnOpenDraft;
 	Button btnInbox;
@@ -185,35 +185,46 @@ public class MainActivity extends Activity
         btnScheduleSend.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) {
-            	
+            	//Turn auto save off
+            	autoSaveOn = FALSE;
                 String phoneNo = txtPhoneNo.getText().toString();
             	String message = txtMessage.getText().toString();
-                if (phoneNo.length()>0 && message.length()>0) { 
-                	//Turn auto save off
-                	autoSaveOn = FALSE;
-                	
-                	//Get to new page
-                	Intent myIntent = new Intent(v.getContext(), Activity_ScheduleSend.class);
+            	
+            	if (btnScheduleSend.getCurrentTextColor()==-65536){
+            		Intent myIntent = new Intent(v.getContext(), Activity_ScheduleSend2.class);
                     startActivityForResult(myIntent, 0);
-
-                }
-                else if (phoneNo.length()==0 && message.length()>0) {
-                	Toast.makeText(getBaseContext(), 
-                        "Phone number is missing", 
-                        Toast.LENGTH_SHORT).show();
-                }
-                else if (phoneNo.length()>0 && message.length()==0) {
-                	Toast.makeText(getBaseContext(), 
-                        "Message cannot be empty", 
-                        Toast.LENGTH_SHORT).show();
-                }
-                else {
-                	Toast.makeText(getBaseContext(), 
-                        "Both phone number and message are missing", 
-                        Toast.LENGTH_SHORT).show();
-                }
+            	}else{
+	                if (phoneNo.length()>0 && message.length()>0) { 
+	               	
+	                	btnScheduleSend.setText("Scheduled");
+	                	btnScheduleSend.setTextColor(-65536);
+	                	
+	                	
+	                	//Get to new page
+	                	Intent myIntent = new Intent(v.getContext(), Activity_ScheduleSend.class);
+	                    startActivityForResult(myIntent, 0);
+	
+	                }
+	                else if (phoneNo.length()==0 && message.length()>0) {
+	                	Toast.makeText(getBaseContext(), 
+	                        "Phone number is missing", 
+	                        Toast.LENGTH_SHORT).show();
+	                }
+	                else if (phoneNo.length()>0 && message.length()==0) {
+	                	Toast.makeText(getBaseContext(), 
+	                        "Message cannot be empty", 
+	                        Toast.LENGTH_SHORT).show();
+	                }
+	                else {
+	                	Toast.makeText(getBaseContext(), 
+	                        "Both phone number and message are missing", 
+	                        Toast.LENGTH_SHORT).show();
+	                }
+            	}
             }
         });
+        
+        
         
         /* Action when click "Save Draft" button */             
         btnSaveDraft.setOnClickListener(new View.OnClickListener() 
