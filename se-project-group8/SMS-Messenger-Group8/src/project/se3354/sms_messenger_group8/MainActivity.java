@@ -165,6 +165,38 @@ public class MainActivity extends Activity
             }
         });
         
+        /* Action when click "Send later" button */
+        btnScheduleSend.setOnClickListener(new View.OnClickListener() 
+        {
+            public void onClick(View v) {
+            	
+                String phoneNo = txtPhoneNo.getText().toString();
+            	String message = txtMessage.getText().toString();
+                if (phoneNo.length()>0 && message.length()>0) { 
+                	//Get to new page
+                	Intent myIntent = new Intent(v.getContext(), Activity_ScheduleSend.class);
+                    startActivityForResult(myIntent, 0);
+                                  
+
+                }
+                else if (phoneNo.length()==0 && message.length()>0) {
+                	Toast.makeText(getBaseContext(), 
+                        "Phone number is missing", 
+                        Toast.LENGTH_SHORT).show();
+                }
+                else if (phoneNo.length()>0 && message.length()==0) {
+                	Toast.makeText(getBaseContext(), 
+                        "Message cannot be empty", 
+                        Toast.LENGTH_SHORT).show();
+                }
+                else {
+                	Toast.makeText(getBaseContext(), 
+                        "Both phone number and message are missing", 
+                        Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        
         /* Action when click "Save Draft" button */             
         btnSaveDraft.setOnClickListener(new View.OnClickListener() 
         {
