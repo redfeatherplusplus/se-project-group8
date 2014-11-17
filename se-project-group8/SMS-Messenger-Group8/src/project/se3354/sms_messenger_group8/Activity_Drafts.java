@@ -154,10 +154,12 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
                 MyMessage sms = new MyMessage();
                 messageType = c.getString(c.getColumnIndexOrThrow("type")).toString();
                 
+                // get the thread id of this message in case conversation checking is needed
+            	String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id")).toString();
+                
                 if(DRAFT.equals(messageType)) {
                 	// address is null for drafts, because of this we need to find the phone number
                 	// by searching "content://mms-sms/canonical-addresses" with our thread_id
-                	String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id")).toString();
                 	sms.setPhoneNumber(getAddressFromThreadID(thread_id));
                 	
                 	// date needs to be formatted from primitive long datatype
@@ -166,6 +168,7 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
                 	
 	                sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
 	                sms.setMessageId(c.getString(c.getColumnIndexOrThrow("_id")).toString());
+	                sms.setMessageThreadId(thread_id);
 	                sms.setMessageType(messageType);
 	               	sms.isDraft(true);
 	               	smsList.add(sms);

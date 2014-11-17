@@ -162,40 +162,57 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
             for(int i=0; i < c.getCount(); i++) {
                 MyMessage sms = new MyMessage();
                 messageType = c.getString(c.getColumnIndexOrThrow("type")).toString();
+
+                //get the thread_id to see if we have already added a message from this conversation
+            	String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id")).toString();
                 
-                if(DRAFT.equals(messageType)) {
-                	// address is null for drafts, because of this we need to find the phone number
-                	// by searching "content://mms-sms/canonical-addresses" with our thread_id
-                	String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id")).toString();
-                	sms.setPhoneNumber(getAddressFromThreadID(thread_id));
-                	
-                	// date needs to be formatted from primitive long datatype
-                	String messageDate = SimplifyDate(c.getLong(c.getColumnIndexOrThrow("date")));
-	               	sms.setMessageDate(messageDate);
-                	
-	                sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
-	                sms.setMessageId(c.getString(c.getColumnIndexOrThrow("_id")).toString());
-	                sms.setMessageType(messageType);
-	               	sms.isDraft(true);
-	               	smsList.add(sms);
-                } 
-                else {
-	                sms.setPhoneNumber(c.getString(c.getColumnIndexOrThrow("address")).toString());
-	                
-	                // date needs to be formatted from primitive long datatype
-                	String messageDate = SimplifyDate(c.getLong(c.getColumnIndexOrThrow("date")));
-	               	sms.setMessageDate(messageDate);
-	               	
-                	sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
-	                sms.setMessageId(c.getString(c.getColumnIndexOrThrow("_id")).toString());
-                    sms.setMessageType(messageType);
-	               	smsList.add(sms);
+            	//only add the message if we no matching converastions are in the sms list
+            	if(!convInSmsList(thread_id)) {
+            		if(DRAFT.equals(messageType)) {
+                    	// address is null for drafts, because of this we need to find the phone number
+                    	// by searching "content://mms-sms/canonical-addresses" with our thread_id
+                    	sms.setPhoneNumber(getAddressFromThreadID(thread_id));
+                    	
+                    	// date needs to be formatted from primitive long datatype
+                    	String messageDate = SimplifyDate(c.getLong(c.getColumnIndexOrThrow("date")));
+    	               	sms.setMessageDate(messageDate);
+                    	
+    	                sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
+    	                sms.setMessageId(c.getString(c.getColumnIndexOrThrow("_id")).toString());
+    	                sms.setMessageThreadId(thread_id);
+    	                sms.setMessageType(messageType);
+    	               	sms.isDraft(true);
+    	               	smsList.add(sms);
+                    } 
+                    else {
+    	                sms.setPhoneNumber(c.getString(c.getColumnIndexOrThrow("address")).toString());
+    	                
+    	                // date needs to be formatted from primitive long datatype
+                    	String messageDate = SimplifyDate(c.getLong(c.getColumnIndexOrThrow("date")));
+    	               	sms.setMessageDate(messageDate);
+    	               	
+                    	sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
+    	                sms.setMessageId(c.getString(c.getColumnIndexOrThrow("_id")).toString());
+    	                sms.setMessageThreadId(thread_id);
+                        sms.setMessageType(messageType);
+    	               	smsList.add(sms);
+                    }
+                    //display phonenumber while contactName loads
+                    sms.setContactName(sms.getPhoneNumber());
                 }
-                //display phonenumber while contactName loads
-                sms.setContactName(sms.getPhoneNumber());
                	c.moveToNext();
            	}
        	}
+	}
+	
+	public boolean convInSmsList(String thread_id) {
+		for (int i=0; i<smsList.size(); i++) {
+			if(smsList.get(i).getMessageThreadId().equals(thread_id)) {
+				return true;
+			}
+		}
+		//return false if no message in the sms list has that thread_id
+		return false;
 	}
 	
 	public String getAddressFromThreadID(String thread_id)
@@ -294,7 +311,7 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 		//if this is the default sms app we can delete messages
 		if (Utils.isDefaultSmsApp(v.getContext())) {
 		    super.onCreateContextMenu(menu, v, menuInfo);
-		    menu.setHeaderTitle("Delete Message?");
+		    menu.setHeaderTitle("Delete Conversation?");
 		    MenuInflater inflater = this.getMenuInflater();
 		    inflater.inflate(R.menu.menu_delete, menu);
 		}
@@ -313,9 +330,9 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 				stopLoading();
 				
 				// delete the selected message
-				String _id = smsList.get(info.position).getMessageId();
-	        	deleteMessage(this.getApplicationContext(), _id);
-            	Toast.makeText(getBaseContext(), "Message Deleted", 
+				String thread_id = smsList.get(info.position).getMessageThreadId();
+	        	deleteConversation(this.getApplicationContext(), thread_id);
+            	Toast.makeText(getBaseContext(), "Conversation Deleted", 
                         Toast.LENGTH_LONG).show();
             	
 	        	// update the inbox, save searchbox during update
@@ -340,7 +357,7 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	    }
 	}
 	
-	public void deleteMessage(Context context, String _id){
+	public void deleteConversation(Context context, String thread_id){
 		 try {
 		        Uri deleterUri = Uri.parse("content://sms");
 		        Cursor c = context.getContentResolver().query(deleterUri,
@@ -349,9 +366,10 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 
 		        if (c != null && c.moveToFirst()) {
 		            do {
-		                String id = String.valueOf(c.getLong(0));
+		                String this_thread_id = String.valueOf(c.getInt(1));
+		                String id = String.valueOf(c.getInt(0));
 
-		                if (_id.equals(id)) {
+		                if (this_thread_id.equals(thread_id)) {
 		                    context.getContentResolver().delete(
 		                        Uri.parse("content://sms/" + id), null, null);
 		                }

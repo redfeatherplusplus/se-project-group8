@@ -104,8 +104,6 @@ public class Activity_Conversation extends Activity {
 			}
 		}); 
 		
-		//Search function removed from conversation view
-		
 	    /* Action when click "Return" button */
 	    btnReturn.setOnClickListener(new View.OnClickListener() {
 	        public void onClick(View v) {
@@ -114,7 +112,6 @@ public class Activity_Conversation extends Activity {
 	            finish();
 	        }
 	    });
-		
 	}
 	
 	public void smsListGenerate() {
@@ -132,11 +129,14 @@ public class Activity_Conversation extends Activity {
                 //String address = (c.getString(c.getColumnIndexOrThrow("address")).toString());		
                 messageType = c.getString(c.getColumnIndexOrThrow("type")).toString();
                 
+
+                // get the thread_id in case conversation checking is needed
+            	String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id")).toString();
+                
                 //create an sms with properly filled datafields
                 if (DRAFT.equals(messageType)) {
                 	// address is null for drafts, because of this we need to find the phone number
                 	// by searching "content://mms-sms/canonical-addresses" with our thread_id
-                	String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id")).toString();
                 	sms.setPhoneNumber(getAddressFromThreadID(thread_id));
                 	
                 	// date needs to be formatted from primitive long datatype
@@ -145,6 +145,7 @@ public class Activity_Conversation extends Activity {
                 	
 	                sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
 	                sms.setMessageId(c.getString(c.getColumnIndexOrThrow("_id")).toString());
+	                sms.setMessageThreadId(thread_id);
 	                sms.setMessageType(messageType);
 	               	sms.isDraft(true);
                 } 
@@ -157,6 +158,7 @@ public class Activity_Conversation extends Activity {
 	               	
                 	sms.setMessageBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
 	                sms.setMessageId(c.getString(c.getColumnIndexOrThrow("_id")).toString());
+	                sms.setMessageThreadId(thread_id);
 	                sms.setMessageType(messageType);
                 }
                 //only add message if address is convAddress.
@@ -310,7 +312,7 @@ public class Activity_Conversation extends Activity {
 
 		        if (c != null && c.moveToFirst()) {
 		            do {
-		                String id = String.valueOf(c.getLong(0));
+		                String id = String.valueOf(c.getInt(0));
 
 		                if (_id.equals(id)) {
 		                    context.getContentResolver().delete(
