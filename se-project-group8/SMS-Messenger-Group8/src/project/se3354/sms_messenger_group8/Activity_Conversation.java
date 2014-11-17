@@ -11,6 +11,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -55,6 +57,7 @@ public class Activity_Conversation extends Activity {
 	private NewMessageReceiver newMessageSignal = null;
 	
 	//Create String Value of the Phone Number of other Person in Conversation
+	private Bitmap convIcon;
 	private String convAddress;
 	private String contactName;
 	    
@@ -63,10 +66,10 @@ public class Activity_Conversation extends Activity {
 		super.onCreate(savedInstanceState);
 		//get data from inbox
 		convAddress = getIntent().getStringExtra("convAddress");
+		convIcon = (Bitmap)getIntent().getParcelableExtra("convIcon");
 		
 		//get name of contact if it exists
     	contactName = getContactName(convAddress);
-
 		
 		// match views with their xml ids
 		setContentView(R.layout.activity_conversation);
@@ -164,8 +167,9 @@ public class Activity_Conversation extends Activity {
                 //only add message if address is convAddress.
                 if (sms.getPhoneNumber().equals(convAddress))
                 {
-                	//replace phone number with contact name
+                	//replace phone number with contact name and set icon
                 	sms.setContactName(contactName);
+            		sms.setIcon(convIcon);
                 	smsList.add(sms);
                 }
                 

@@ -1,9 +1,13 @@
 package project.se3354.sms_messenger_group8;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.view.View;
 
 public class MyMessage {
-	//private Bitmap icon;
+	
+	private Bitmap icon;
     private String contactName = null;
     private String phoneNumber = null;
     private String messageDate = null;
@@ -13,7 +17,7 @@ public class MyMessage {
     private String messageId = null;
     private String messageDraft = null;
     
-    //public Bitmap getIcon() {return icon;}
+    public Bitmap getIcon() {return icon;}
     public String getContactName() {return contactName;}
     public String getPhoneNumber() {return phoneNumber;}
     public String getMessageDate() {return messageDate;}
@@ -23,7 +27,7 @@ public class MyMessage {
     public String getMessageId() {return messageId;}
     public String isDraft() {return messageDraft;}
     
-    //public void setIcon(Bitmap icon) {this.icon = icon;}
+    public void setIcon(Bitmap icon) {this.icon = icon;}
     public void setContactName(String contactName) {this.contactName = contactName;}
     public void setPhoneNumber(String phoneNumber) {this.phoneNumber = phoneNumber;}
     public void setMessageDate(String messageDate) {this.messageDate = messageDate;}

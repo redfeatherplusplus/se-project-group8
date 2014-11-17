@@ -36,6 +36,8 @@ import android.content.CursorLoader;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.app.Activity;
 import android.content.Intent;
 import android.widget.Button;
@@ -111,7 +113,9 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 				//display conversation for that address
 				Intent displayConv = new Intent(view.getContext(), Activity_Conversation.class);
 				String convAddress = smsList.get(position).getPhoneNumber();
+				Bitmap convIcon = smsList.get(position).getIcon();
                 displayConv.putExtra("convAddress", convAddress);
+                displayConv.putExtra("convIcon", convIcon);
 				startActivity(displayConv);
 			}
 		}); 
@@ -197,6 +201,9 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
                         sms.setMessageType(messageType);
     	               	smsList.add(sms);
                     }
+                    //display placeholder icon while icon loads
+            		sms.setIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_contact_picture_2));
+            		
                     //display phonenumber while contactName loads
                     sms.setContactName(sms.getPhoneNumber());
                 }

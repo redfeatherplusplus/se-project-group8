@@ -1,15 +1,25 @@
 package project.se3354.sms_messenger_group8;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 //import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,7 +50,7 @@ public class ContactsAdapter extends ArrayAdapter<MyMessage> implements Filterab
             message = inflater.inflate(R.layout.message_layout, parent, false);
 
             holder = new ViewHolder();
-            //holder.icon = (ImageView)message.findViewById(R.id.icon);
+            holder.icon = (ImageView)message.findViewById(R.id.icon);
             holder.contactName = (TextView)message.findViewById(R.id.contactName);
             holder.messageDate = (TextView)message.findViewById(R.id.messageDate);
             holder.messageBody = (TextView)message.findViewById(R.id.messageBody);
@@ -54,8 +64,8 @@ public class ContactsAdapter extends ArrayAdapter<MyMessage> implements Filterab
         }
 
         MyMessage contact = data.get(position);
-
-        //holder.icon.setImageBitmap(contact.getIcon());
+	    
+        holder.icon.setImageBitmap(contact.getIcon());
         holder.contactName.setText(contact.getContactName());
         holder.messageDate.setText(contact.getMessageDate());
         holder.messageBody.setText(contact.getMessageBody());
@@ -126,7 +136,7 @@ public class ContactsAdapter extends ArrayAdapter<MyMessage> implements Filterab
 
     static class ViewHolder
     {
-    	//ImageView icon;
+    	ImageView icon;
         TextView contactName;
         TextView messageDate;
         TextView messageBody;
