@@ -40,6 +40,8 @@ public class MainActivity extends Activity
 {
 	public static final int MAIN_ACTIVITY = 256;
 	public static final int ACTIVITY_MULTISEND = 255;
+	public static final int TRUE = 1;
+	public static final int FALSE = 0;
 	public static EditText txtAutoReply;
 	public static EditText txtPhoneNo;
 	public static EditText txtMessage;
@@ -59,6 +61,7 @@ public class MainActivity extends Activity
 	
 	static TextView txtReceive;
 	
+	public static int autoSaveOn=1;
 	public static int autoReplyOn=0;
 
     /* Called when the activity is first created. */
@@ -96,7 +99,13 @@ public class MainActivity extends Activity
         btnFindContactNo.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) { 
+            	//Turn auto save off
+            	autoSaveOn = FALSE;
+            	
+            	//set the caller for the contacts activity to be the main activity
 	    		Activity_Contacts.caller = MAIN_ACTIVITY;
+	    		
+	    		//call the contacts activity
             	Intent myIntent = new Intent(v.getContext(), Activity_Contacts.class);
                 startActivityForResult(myIntent, 0);
             }
@@ -106,6 +115,9 @@ public class MainActivity extends Activity
         btnAddContact.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) { 
+            	//Turn auto save off
+            	autoSaveOn = FALSE;
+            
             	// check to see if there is a phone number to add as a contact
         		String phoneNo = txtPhoneNo.getText().toString();
         		
@@ -125,6 +137,10 @@ public class MainActivity extends Activity
         btnAddMoreNo.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) { 
+            	//Turn auto save off
+            	autoSaveOn = FALSE;
+            	
+            	//Start the multisend activity
             	Intent myIntent = new Intent(v.getContext(), Activity_MultiSend.class);
                 startActivityForResult(myIntent, 0);
             }
@@ -173,10 +189,12 @@ public class MainActivity extends Activity
                 String phoneNo = txtPhoneNo.getText().toString();
             	String message = txtMessage.getText().toString();
                 if (phoneNo.length()>0 && message.length()>0) { 
+                	//Turn auto save off
+                	autoSaveOn = FALSE;
+                	
                 	//Get to new page
                 	Intent myIntent = new Intent(v.getContext(), Activity_ScheduleSend.class);
                     startActivityForResult(myIntent, 0);
-                                  
 
                 }
                 else if (phoneNo.length()==0 && message.length()>0) {
@@ -370,7 +388,8 @@ public class MainActivity extends Activity
         
         //if the current app is the stock app, save messages as a draft.
         final String myPackageName = getPackageName();
-        if (Telephony.Sms.getDefaultSmsPackage(this).equals(myPackageName)) {
+        if (Telephony.Sms.getDefaultSmsPackage(this).equals(myPackageName) &&
+        		autoSaveOn == TRUE) {
         	String phoneNo = txtPhoneNo.getText().toString();
         	String message = txtMessage.getText().toString();
         	//phone number has to be there before saving draft
@@ -391,6 +410,10 @@ public class MainActivity extends Activity
             	Toast.makeText(getBaseContext(), "Message saved as draft.", 
                         Toast.LENGTH_LONG).show();
         	}
+        }
+        else {
+        	//turn auto save back on for the next pause that allows for it
+        	autoSaveOn = TRUE;
         }
     }
     
@@ -417,9 +440,6 @@ public class MainActivity extends Activity
             	Intent intent = new Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI);
 				intent.putExtra(ContactsContract.Intents.Insert.PHONE, phoneNo);
 				startActivity(intent);
-				
-				//Clear phone number box after adding the contac
-                txtPhoneNo.setText(null);
 				
 	            return true;
 	        case R.id.no_addcontact:
