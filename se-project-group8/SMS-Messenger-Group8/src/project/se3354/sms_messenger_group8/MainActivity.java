@@ -13,16 +13,23 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.telephony.SmsManager;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.TextView; 
 import android.widget.ToggleButton;
+import android.provider.Contacts.Intents;
 import android.provider.Telephony.Sms.Inbox;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import java.lang.Object;
@@ -38,6 +45,7 @@ public class MainActivity extends Activity
 	public static EditText txtMessage;
 	
 	Button btnFindContactNo;
+	Button btnAddContact;
 	Button btnAddMoreNo;
 	Button btnSendSMS;
 	Button btnScheduleSend;
@@ -63,6 +71,7 @@ public class MainActivity extends Activity
         
         btnFindContactNo = (Button) findViewById(R.id.btnFindContactNo); 
         btnAddMoreNo = (Button) findViewById(R.id.btnAddMoreNo);
+        btnAddContact = (Button) findViewById(R.id.btnAddContact);
         btnSendSMS = (Button) findViewById(R.id.btnSendSMS);
         btnScheduleSend = (Button) findViewById(R.id.btnScheduleSend);
         btnInbox = (Button) findViewById(R.id.btnInbox);
@@ -80,6 +89,9 @@ public class MainActivity extends Activity
         txtAutoReply = (EditText) findViewById(R.id.txtAutoReply);
         toggleBtnAutoReply = (ToggleButton) findViewById(R.id.toggleBtnAutoReply); // Auto_Reply button
         
+        //register context menu for btnAddContact
+        registerForContextMenu(findViewById(R.id.btnAddContact));
+        
         /* Action when click "From Contacts" button */             
         btnFindContactNo.setOnClickListener(new View.OnClickListener() 
         {
@@ -87,6 +99,25 @@ public class MainActivity extends Activity
 	    		Activity_Contacts.caller = MAIN_ACTIVITY;
             	Intent myIntent = new Intent(v.getContext(), Activity_Contacts.class);
                 startActivityForResult(myIntent, 0);
+            }
+        });
+        
+        /* Action when click "Add as Contact" button */             
+        btnAddContact.setOnClickListener(new View.OnClickListener() 
+        {
+            public void onClick(View v) { 
+            	// check to see if there is a phone number to add as a contact
+        		String phoneNo = txtPhoneNo.getText().toString();
+        		
+        		// open context menu if there is a phonenumber, else display warning
+            	if (phoneNo.length()>0) {
+            		openContextMenu(v);
+            	}
+            	else {
+                	Toast.makeText(getBaseContext(), 
+                        "Please put in the contact's phone number first", 
+                        Toast.LENGTH_SHORT).show();
+            	}
             }
         });
         
@@ -166,7 +197,7 @@ public class MainActivity extends Activity
                     }
         		}
         		else {
-        			Toast.makeText(getBaseContext(), "Must be default sms app save drafts", 
+        			Toast.makeText(getBaseContext(), "Must be default SMS app save drafts", 
                     Toast.LENGTH_LONG).show();
         		}
             }
@@ -191,7 +222,7 @@ public class MainActivity extends Activity
                     startActivityForResult(myIntent, 0);
         		}
         		else {
-                	Toast.makeText(getBaseContext(), "Must be default sms app edit drafts", 
+                	Toast.makeText(getBaseContext(), "Must be default SMS app edit drafts", 
                 	Toast.LENGTH_LONG).show();
         		}
             }
@@ -330,6 +361,41 @@ public class MainActivity extends Activity
         	}
         }
     }
+    
+    /* Context Menu that appears on btnAddContact press */
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+	                                ContextMenuInfo menuInfo) {
+		//create the context menu
+	    super.onCreateContextMenu(menu, v, menuInfo);
+	    menu.setHeaderTitle("This will open the Contact Manager.");
+	    MenuInflater inflater = this.getMenuInflater();
+	    inflater.inflate(R.menu.menu_add_contact, menu);
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+	    switch (item.getItemId()) {
+	        case R.id.yes_addcontact:
+	        	//get the text inside the phonenumber
+            	String phoneNo = txtPhoneNo.getText().toString();
+	        	
+	        	// pass the acquired phone number to the contacts app
+            	Intent intent = new Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI);
+				intent.putExtra(ContactsContract.Intents.Insert.PHONE, phoneNo);
+				startActivity(intent);
+				
+				//Clear phone number box after adding the contac
+                txtPhoneNo.setText(null);
+				
+	            return true;
+	        case R.id.no_addcontact:
+	            return true;
+	        default:
+	            return super.onContextItemSelected(item);
+	    }
+	}
 
     /* Method of sending a message to another device */
     public void sendSMS(String phoneNumber, String message)

@@ -263,7 +263,7 @@ public class Activity_Conversation extends Activity {
 		    inflater.inflate(R.menu.menu_delete, menu);
 		}
 		else {
-        	Toast.makeText(getBaseContext(), "Must be default sms app to delete messages", 
+        	Toast.makeText(getBaseContext(), "Must be default SMS app to delete messages", 
         	Toast.LENGTH_LONG).show();
 		}
 	}
@@ -295,7 +295,6 @@ public class Activity_Conversation extends Activity {
 	    		Activity_Inbox.dataChanged = TRUE;
 	            return true;
 	        case R.id.no_delete:
-	        	System.out.println(info.position);
 	            return true;
 	        default:
 	            return super.onContextItemSelected(item);

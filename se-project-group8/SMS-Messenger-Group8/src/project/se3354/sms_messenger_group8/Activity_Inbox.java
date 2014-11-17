@@ -115,8 +115,6 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 				startActivity(displayConv);
 			}
 		}); 
-		
-		/* Action when long click on Contact Item */
 
 	    /* Adding search functionality*/
 		inputSearch.addTextChangedListener(new TextWatcher() {
@@ -301,7 +299,7 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 		    inflater.inflate(R.menu.menu_delete, menu);
 		}
 		else {
-        	Toast.makeText(getBaseContext(), "Must be default sms app to delete messages", 
+        	Toast.makeText(getBaseContext(), "Must be default SMS app to delete messages", 
         	Toast.LENGTH_LONG).show();
 		}
 	}
@@ -336,7 +334,6 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 			    restartLoading();
 	            return true;
 	        case R.id.no_delete:
-	        	System.out.println(info.position);
 	            return true;
 	        default:
 	            return super.onContextItemSelected(item);
