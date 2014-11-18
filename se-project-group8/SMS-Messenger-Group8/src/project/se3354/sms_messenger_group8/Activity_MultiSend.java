@@ -45,7 +45,7 @@ public class Activity_MultiSend extends Activity {
 		phoneNoEdit.setText(MainActivity.txtPhoneNo.getText().toString());
 	    adapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, list);
 	    // set the lv variable to your list in the xml
-	    lv=(ListView)findViewById(R.id.list);  
+	    lv=(ListView)findViewById(R.id.list_multisend);  
 	    lv.setAdapter(adapter);
 	    btnSendMulti = (Button) findViewById(R.id.btnSendMulti);
 	    addFromContacts = (Button) findViewById(R.id.addFromContacts);
@@ -79,7 +79,7 @@ public class Activity_MultiSend extends Activity {
 	    
 	    btnBack.setOnClickListener(new View.OnClickListener() {
 	    	public void onClick(View v) {
-	    	finish();
+	    		finish();
 	    	}
 	    });
 	    
@@ -102,11 +102,10 @@ public class Activity_MultiSend extends Activity {
 	    	    
                 //Add time and date at the end
                 Date resultdate = new Date(System.currentTimeMillis());
-                MainActivity mainActivity = new MainActivity();
-                mainActivity.txtReceive.setText("SMS sent to "+phoneNumber + ": "
+                MainActivity.txtReceive.setText("SMS sent to "+phoneNumber + ": "
                 		+"\n"+"["+ message+"]\n"+ resultdate);
-                mainActivity.txtPhoneNo.setText("");
-                mainActivity.txtMessage.setText("");
+                MainActivity.txtPhoneNo.setText("");
+                MainActivity.txtMessage.setText("");
                 //After sending, go back to main layout---replaced by finish()
 	    	    //Intent myIntent = new Intent(v.getContext(), MainActivity.class);
                 //startActivityForResult(myIntent, 0);
