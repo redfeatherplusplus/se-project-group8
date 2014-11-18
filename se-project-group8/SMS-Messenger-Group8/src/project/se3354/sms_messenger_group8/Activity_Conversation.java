@@ -101,7 +101,7 @@ public class Activity_Conversation extends Activity {
 		// Create an empty adapter we will use to display the loaded data.
 		// We pass null for the cursor, then update it in onLoadFinished()
 		mAdapter = new ContactsAdapter(Activity_Conversation.this, 
-				R.layout.message_layout, smsList);
+				R.layout.conversation_layout, smsList);
 		messagesList.setAdapter(mAdapter);
 		
 		/* Action when click on Contact Item */
@@ -296,7 +296,7 @@ public class Activity_Conversation extends Activity {
             
             // create a new message filter since the database changed
             mAdapter = new ContactsAdapter(Activity_Conversation.this, 
-    				R.layout.message_layout, smsList);
+    				R.layout.conversation_layout, smsList);
             mAdapter.notifyDataSetChanged();
     		messagesList.setAdapter(mAdapter);
 	        inputSearch.setText(SearchBox);
@@ -343,7 +343,7 @@ public class Activity_Conversation extends Activity {
 	            
 	            // create a new message filter since the database changed
 	            mAdapter = new ContactsAdapter(Activity_Conversation.this, 
-	    				R.layout.message_layout, smsList);
+	    				R.layout.conversation_layout, smsList);
 	            mAdapter.notifyDataSetChanged();
 	    		messagesList.setAdapter(mAdapter);
 		        inputSearch.setText(SearchBox);

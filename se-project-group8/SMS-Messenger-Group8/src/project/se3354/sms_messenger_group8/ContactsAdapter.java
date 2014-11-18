@@ -47,17 +47,34 @@ public class ContactsAdapter extends ArrayAdapter<MyMessage> implements Filterab
 
         if(message == null)
         {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            message = inflater.inflate(R.layout.message_layout, parent, false);
+        	if(layoutResourceId == R.layout.conversation_layout) {
+        		//inflate a conversation layout if the layout requires it
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                message = inflater.inflate(R.layout.conversation_layout, parent, false);
 
-            holder = new ViewHolder();
-            holder.icon = (ImageView)message.findViewById(R.id.icon);
-            holder.contactName = (TextView)message.findViewById(R.id.contactName);
-            holder.messageDate = (TextView)message.findViewById(R.id.messageDate);
-            holder.messageBody = (TextView)message.findViewById(R.id.messageBody);
-            holder.isDraft = (TextView)message.findViewById(R.id.isDraft);
+                holder = new ViewHolder();
+                holder.icon = (ImageView)message.findViewById(R.id.iconConv);
+                holder.contactName = (TextView)message.findViewById(R.id.contactNameConv);
+                holder.messageDate = (TextView)message.findViewById(R.id.messageDateConv);
+                holder.messageBody = (TextView)message.findViewById(R.id.messageBodyConv);
+                holder.isDraft = (TextView)message.findViewById(R.id.isDraftConv);
 
-            message.setTag(holder);
+                message.setTag(holder);
+        	}
+        	else {
+        		//inflate a message layout if the Id isn't the conversation layout Id
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                message = inflater.inflate(R.layout.message_layout, parent, false);
+
+                holder = new ViewHolder();
+                holder.icon = (ImageView)message.findViewById(R.id.icon);
+                holder.contactName = (TextView)message.findViewById(R.id.contactName);
+                holder.messageDate = (TextView)message.findViewById(R.id.messageDate);
+                holder.messageBody = (TextView)message.findViewById(R.id.messageBody);
+                holder.isDraft = (TextView)message.findViewById(R.id.isDraft);
+
+                message.setTag(holder);
+        	}
         }
         else
         {
