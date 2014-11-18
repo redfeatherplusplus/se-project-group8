@@ -31,6 +31,7 @@ import android.content.CursorLoader;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.app.Activity;
 import android.content.Intent;
 import android.widget.Button;
@@ -154,12 +155,10 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
                 MyMessage sms = new MyMessage();
                 messageType = c.getString(c.getColumnIndexOrThrow("type")).toString();
                 
-                // get the thread id of this message in case conversation checking is needed
-            	String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id")).toString();
-                
                 if(DRAFT.equals(messageType)) {
                 	// address is null for drafts, because of this we need to find the phone number
                 	// by searching "content://mms-sms/canonical-addresses" with our thread_id
+                	String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id")).toString();
                 	sms.setPhoneNumber(getAddressFromThreadID(thread_id));
                 	
                 	// date needs to be formatted from primitive long datatype
@@ -171,11 +170,14 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
 	                sms.setMessageThreadId(thread_id);
 	                sms.setMessageType(messageType);
 	               	sms.isDraft(true);
+
+	                //display placeholder icon while icon loads
+	        		sms.setIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_contact_picture_2));
+	                
+	                //display phonenumber while contactName loads
+	                sms.setContactName(sms.getPhoneNumber());
 	               	smsList.add(sms);
                 } 
-                
-                //display phonenumber while contactName loads
-                sms.setContactName(sms.getPhoneNumber());
                	c.moveToNext();
            	}
        	}

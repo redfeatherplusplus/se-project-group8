@@ -1,5 +1,6 @@
 package project.se3354.sms_messenger_group8;
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,6 +8,7 @@ import java.util.Date;
 import project.se3354.sms_messenger_group8.Activity_Inbox.NewMessageReceiver;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -58,6 +60,7 @@ public class Activity_Conversation extends Activity {
 	
 	//Create String Value of the Phone Number of other Person in Conversation
 	private Bitmap convIcon;
+	private Bitmap userIcon;
 	private String convAddress;
 	private String contactName;
 	    
@@ -70,6 +73,9 @@ public class Activity_Conversation extends Activity {
 		
 		//get name of contact if it exists
     	contactName = getContactName(convAddress);
+    	
+    	//get user's contact photo
+    	userIcon = getUserContactPhoto();
 		
 		// match views with their xml ids
 		setContentView(R.layout.activity_conversation);
@@ -165,11 +171,22 @@ public class Activity_Conversation extends Activity {
 	                sms.setMessageType(messageType);
                 }
                 //only add message if address is convAddress.
-                if (sms.getPhoneNumber().equals(convAddress))
+                if(sms.getPhoneNumber().equals(convAddress))
                 {
                 	//replace phone number with contact name and set icon
-                	sms.setContactName(contactName);
-            		sms.setIcon(convIcon);
+                	if(sms.getMessageType().equals(USERSENT)) {
+                		//if this message is from the user dislay it differently
+                		sms.setContactName("Me");
+                		
+                		//display userIcon if they have one.
+                		if (userIcon != null) {
+                			sms.setIcon(userIcon);
+                		}
+                	}
+                	else {
+                		sms.setContactName(contactName);
+                		sms.setIcon(convIcon);
+                	}
                 	smsList.add(sms);
                 }
                 
@@ -206,9 +223,22 @@ public class Activity_Conversation extends Activity {
        	return (address);
     }
 	
+	public Bitmap getUserContactPhoto() {
+        Bitmap userPhoto = null;
+        ContentResolver cr = this.getContentResolver();
+        InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(cr, ContactsContract.Profile.CONTENT_URI);
+        if (input != null) {
+        	userPhoto = BitmapFactory.decodeStream(input);
+        } else {
+        	userPhoto = BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_contact_picture_2);
+        }
+        return userPhoto;
+	}
+	
 	public String getContactName(String address) {
         Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(address));  
-        Cursor cs = getContentResolver().query(uri, new String[]{PhoneLookup.DISPLAY_NAME},PhoneLookup.NUMBER+"='"+address+"'",null,null);
+        Cursor cs = getContentResolver().query(uri, new String[]{PhoneLookup.DISPLAY_NAME}, 
+        		PhoneLookup.NUMBER+"='"+address+"'",null,null);
 
         if(cs.getCount()>0) {
         	cs.moveToFirst();
