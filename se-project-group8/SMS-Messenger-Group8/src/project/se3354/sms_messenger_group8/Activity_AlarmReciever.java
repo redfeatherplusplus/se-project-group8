@@ -59,7 +59,7 @@ public class Activity_AlarmReciever extends BroadcastReceiver
  
              }
    
-         Context context;
+         //Context context;
          public void sendSchedule(String phoneNumber, String message, Context context)
          {      	
         	 
