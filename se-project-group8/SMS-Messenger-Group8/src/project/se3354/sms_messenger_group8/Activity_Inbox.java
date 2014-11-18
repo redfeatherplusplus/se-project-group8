@@ -67,15 +67,6 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	private ContactsAdapter mAdapter = null;
 	private ArrayList<MyMessage> smsList = null;
 	private NewMessageReceiver newMessageSignal = null;
-	
-	// These are the Contacts rows that we will retrieve
-	static final String[] PROJECTION = new String[] {ContactsContract.Data._ID,
-	    ContactsContract.Data.DISPLAY_NAME};
-	
-	// This is the select criteria
-	static final String SELECTION = "((" + 
-	    ContactsContract.Data.DISPLAY_NAME + " NOTNULL) AND (" +
-	    ContactsContract.Data.DISPLAY_NAME + " != '' ))";
 	    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

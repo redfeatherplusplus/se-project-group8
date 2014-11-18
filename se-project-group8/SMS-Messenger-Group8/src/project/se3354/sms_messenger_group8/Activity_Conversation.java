@@ -121,6 +121,27 @@ public class Activity_Conversation extends Activity {
 	            finish();
 	        }
 	    });
+	    /* Adding search functionality*/
+		inputSearch.addTextChangedListener(new TextWatcher() {
+	        
+	        @Override
+	        public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+	            // When user changed the Text
+	            mAdapter.getFilter().filter(cs.toString()); 
+	        }
+	         
+	        @Override
+	        public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+	                int arg3) {
+	            // TODO Auto-generated method stub
+	             
+	        }
+	         
+	        @Override
+	        public void afterTextChanged(Editable arg0) {
+	            // TODO Auto-generated method stub                         
+	        }
+	    });
 	}
 	
 	public void smsListGenerate() {
@@ -174,8 +195,8 @@ public class Activity_Conversation extends Activity {
                 if(sms.getPhoneNumber().equals(convAddress))
                 {
                 	//replace phone number with contact name and set icon
-                	if(sms.getMessageType().equals(USERSENT)) {
-                		//if this message is from the user dislay it differently
+                	if(sms.getMessageType().trim().equals(USERSENT)) {
+                		//if this message is from the user display it differently
                 		sms.setContactName("Me");
                 		
                 		//display userIcon if they have one.
@@ -269,7 +290,7 @@ public class Activity_Conversation extends Activity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
         	// update the inbox, save searchbox during update
-	        // String SearchBox = inputSearch.getText().toString();
+	        String SearchBox = inputSearch.getText().toString();
             mAdapter.clear();
             smsListGenerate();
             
@@ -278,7 +299,7 @@ public class Activity_Conversation extends Activity {
     				R.layout.message_layout, smsList);
             mAdapter.notifyDataSetChanged();
     		messagesList.setAdapter(mAdapter);
-	        // inputSearch.setText(SearchBox);
+	        inputSearch.setText(SearchBox);
 		}
 	}
 	
@@ -316,7 +337,7 @@ public class Activity_Conversation extends Activity {
                         Toast.LENGTH_LONG).show();
             	
 	        	// update the inbox, save searchbox during update
-		        //String SearchBox = inputSearch.getText().toString();
+		        String SearchBox = inputSearch.getText().toString();
 	            mAdapter.clear();
 	            smsListGenerate();
 	            
@@ -325,9 +346,9 @@ public class Activity_Conversation extends Activity {
 	    				R.layout.message_layout, smsList);
 	            mAdapter.notifyDataSetChanged();
 	    		messagesList.setAdapter(mAdapter);
-		        //inputSearch.setText(SearchBox);
+		        inputSearch.setText(SearchBox);
 	    		
-	    		//notify the inbox that the data was changed
+	    		//notify the inbox that the data was changed while inside conversation
 	    		Activity_Inbox.dataChanged = TRUE;
 	            return true;
 	        case R.id.no_delete:
