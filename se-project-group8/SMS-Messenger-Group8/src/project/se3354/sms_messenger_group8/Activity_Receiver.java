@@ -134,7 +134,7 @@ public class Activity_Receiver extends BroadcastReceiver
         values.put("address", recipient);
         values.put("body", body);
         values.put("date", System.currentTimeMillis());
-        values.put("type", 2);
+        values.put("type", 1);
         values.put("thread_id", thread_id);
         context.getContentResolver().insert(Uri.parse("content://sms/inbox"), values);
     }

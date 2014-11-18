@@ -529,7 +529,7 @@ public class MainActivity extends Activity
         values.put("address", recipient);
         values.put("body", body);
         values.put("date", System.currentTimeMillis());
-        values.put("type", 1);
+        values.put("type", 2);
         values.put("thread_id", thread_id);
         getContentResolver().insert(Uri.parse("content://sms/sent"), values);
     }

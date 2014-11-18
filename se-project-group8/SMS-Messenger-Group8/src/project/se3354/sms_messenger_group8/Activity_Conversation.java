@@ -109,7 +109,9 @@ public class Activity_Conversation extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				//do something, maybe implement deleting messages?
+				String messageType = smsList.get(position).getMessageType();
+				Toast.makeText(getBaseContext(), messageType, 
+			        	Toast.LENGTH_LONG).show();
 			}
 		}); 
 		
