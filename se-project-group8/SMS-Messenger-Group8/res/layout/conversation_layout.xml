@@ -61,7 +61,6 @@
         android:layout_below="@+id/contactNameConv"
         android:layout_toLeftOf="@+id/messageDateConv"
         android:ellipsize="marquee"
-        android:inputType="textMultiLine|textNoSuggestions"
         android:text="Message"
         android:textSize="12sp" />
 
