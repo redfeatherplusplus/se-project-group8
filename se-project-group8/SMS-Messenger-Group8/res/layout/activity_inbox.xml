@@ -12,7 +12,7 @@
     <EditText android:id="@+id/inputSearch"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="Search for a message..."
+        android:hint="Search for a contact..."
         android:inputType="textVisiblePassword"/>
 
     <ListView

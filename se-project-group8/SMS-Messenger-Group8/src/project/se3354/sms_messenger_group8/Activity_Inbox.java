@@ -117,7 +117,10 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	        
 	        @Override
 	        public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-	            // When user changed the Text
+	        	//set the filter to search for contacts
+	        	ContactsAdapter.searchingForContact = true;
+	        	
+	        	// When user changed the Text
 	            mAdapter.getFilter().filter(cs.toString()); 
 	        }
 	         

@@ -24,7 +24,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ContactsAdapter extends ArrayAdapter<MyMessage> implements Filterable {
-    private final Context context;
+    public static boolean searchingForContact = false;
+	private final Context context;
     private ArrayList<MyMessage> data;
     private ArrayList<MyMessage> dataOrigin;
     private final int layoutResourceId;
@@ -103,19 +104,40 @@ public class ContactsAdapter extends ArrayAdapter<MyMessage> implements Filterab
                 final ArrayList<MyMessage> newList = new ArrayList<MyMessage>();
                 int count = list.size();
 
-                for (int i=0; i<count; i++)
-                {
-                    final MyMessage message = list.get(i);
-                    final String value = message.getMessageBody().toLowerCase();
-
-                    if (value.startsWith(prefix))
+                // if we are searching for contacts, search contact name instead
+                if(searchingForContact == true) {
+                	for (int i=0; i<count; i++)
                     {
-                    	newList.add(message);
+                        final MyMessage message = list.get(i);
+                        final String value = message.getContactName().toLowerCase();
+                        
+                        if (value.startsWith(prefix))
+                        {
+                        	newList.add(message);
+                        }
                     }
+                    results.values = newList;
+                    results.count = newList.size();
                 }
-                results.values = newList;
-                results.count = newList.size();
+                else {
+                	for (int i=0; i<count; i++)
+                    {
+                        final MyMessage message = list.get(i);
+                        final String value = message.getMessageBody().toLowerCase();
+                     
+                        if (value.startsWith(prefix))
+                        {
+                        	newList.add(message);
+                        }
+                    }
+                    results.values = newList;
+                    results.count = newList.size();
+                }
+                
+                
             }
+            // reset searching for contacts to be false for the next search
+            searchingForContact = false;
             return results;
         }
 
