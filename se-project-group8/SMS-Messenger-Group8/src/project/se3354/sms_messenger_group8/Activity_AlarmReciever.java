@@ -36,7 +36,7 @@ public class Activity_AlarmReciever extends BroadcastReceiver
                     String message=Activity_ScheduleSend.txtText.getText().toString();
                     
                     
-                    sendSchedule (phoneNumberReciver, message);
+                    sendSchedule (phoneNumberReciver, message, context);
                     
                                                            
                     Toast.makeText(context, "Scheduled SMS has been Sent", Toast.LENGTH_SHORT).show();
@@ -60,7 +60,7 @@ public class Activity_AlarmReciever extends BroadcastReceiver
              }
    
          Context context;
-         public void sendSchedule(String phoneNumber, String message)
+         public void sendSchedule(String phoneNumber, String message, Context context)
          {      	
         	 
                  try {
@@ -68,7 +68,7 @@ public class Activity_AlarmReciever extends BroadcastReceiver
                      sms.sendTextMessage(phoneNumber, null, message, null, null);
 
                      // manage "content://sms" since we are the default sms app
-                     //saveUsersentSMS(phoneNumber, message);
+                     saveUsersentSMS(phoneNumber, message, context);
                      
                    //Add time and date at the end
                      Date resultdate = new Date(System.currentTimeMillis());
@@ -87,12 +87,12 @@ public class Activity_AlarmReciever extends BroadcastReceiver
              
          }
      	
-     	public void saveUsersentSMS(String recipient, String body) {
-             Uri threadIdUri = Uri.parse("content://mms-sms/threadID");
-             Uri.Builder builder = threadIdUri.buildUpon();
-             builder.appendQueryParameter("recipient", recipient);
-             Uri uri = builder.build();
-             Long thread_id = get_thread_id(uri, recipient);
+     	public void saveUsersentSMS(String recipient, String body, Context context) {
+     		Uri threadIdUri = Uri.parse("content://mms-sms/threadID");
+            Uri.Builder builder = threadIdUri.buildUpon();
+            builder.appendQueryParameter("recipient", recipient);
+            Uri uri = builder.build();
+            Long thread_id = get_thread_id(uri, recipient, context);
 
              ContentValues values = new ContentValues();
              values.put("address", recipient);
@@ -103,20 +103,20 @@ public class Activity_AlarmReciever extends BroadcastReceiver
              context.getContentResolver().insert(Uri.parse("content://sms/sent"), values);
          }
      	
-     	private Long get_thread_id(Uri uri, String recipient) {
-             long threadId = 0;
-             Cursor cursor = context.getContentResolver().query(uri, new String[] { "_id" },
-                     null, null, null);
-             if (cursor != null) {
-                 try {
-                     if (cursor.moveToFirst()) {
-                     	threadId = cursor.getLong(0);
-                     }
-                 } finally {
-                     cursor.close();
-                 }
-             }
-             return threadId;
-         }
+     	private Long get_thread_id(Uri uri, String recipient, Context context) {
+            long threadId = 0;
+            Cursor cursor = context.getContentResolver().query(uri, new String[] { "_id" },
+                    null, null, null);
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                    	threadId = cursor.getLong(0);
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+            return threadId;
+        }
       
 }

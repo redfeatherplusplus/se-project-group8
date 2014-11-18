@@ -51,11 +51,15 @@ public class Activity_ScheduleSend extends Activity {
 		txtText.setText(MainActivity.txtMessage.getText().toString());
 		
 		//Clean information in main page
-		MainActivity.txtPhoneNo.setText(null);
-        MainActivity.txtMessage.setText(null);
+		MainActivity.txtPhoneNo.setText("");
+        MainActivity.txtMessage.setText("");
         
         btnBack.setOnClickListener(new View.OnClickListener() {
 	    	public void onClick(View v) {
+	    		MainActivity.btnScheduleSend.setText("Send Later");
+            	MainActivity.btnScheduleSend.setTextColor(-16777216);
+            	MainActivity.txtPhoneNo.setText(txtNumber.getText().toString());
+                MainActivity.txtMessage.setText(txtText.getText().toString());
 	    		//Go back to previous page, keep old information
 	    		finish();
 	    	}
@@ -69,6 +73,9 @@ public class Activity_ScheduleSend extends Activity {
 		// create an Intent and set the class which will execute when Alarm triggers
 	    Intent intentAlarm = new Intent(this, Activity_AlarmReciever.class);
 		alarmManager.cancel(PendingIntent.getBroadcast(this,1,  intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+		
+		MainActivity.btnScheduleSend.setText("Send Later");
+    	MainActivity.btnScheduleSend.setTextColor(-16777216);
 		//Go back to clean main page
 		Intent myIntent = new Intent(v.getContext(), MainActivity.class);
         startActivityForResult(myIntent, 0);
