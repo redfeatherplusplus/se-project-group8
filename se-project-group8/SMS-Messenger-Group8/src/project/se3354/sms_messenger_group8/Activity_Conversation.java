@@ -34,6 +34,12 @@ import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
+/**
+ * 
+ * @author Group 8
+ * Activity for the Conversation View of the app
+ *
+ */
 public class Activity_Conversation extends Activity {
 
 	public static final String DRAFT = "3";
@@ -65,6 +71,9 @@ public class Activity_Conversation extends Activity {
 	private String contactName;
 	    
 	@Override
+	/**
+	 * Create method to populate the conversation view
+	 */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//get data from inbox
@@ -104,7 +113,9 @@ public class Activity_Conversation extends Activity {
 				R.layout.conversation_layout, smsList);
 		messagesList.setAdapter(mAdapter);
 		
-		/* Action when click on Contact Item */
+		/**
+		 *  Action when click on Contact Item 
+		 */
 		messagesList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -113,7 +124,9 @@ public class Activity_Conversation extends Activity {
 			}
 		}); 
 		
-	    /* Action when click "Return" button */
+	    /** 
+	     * Action when click "Return" button 
+	     */
 	    btnReturn.setOnClickListener(new View.OnClickListener() {
 	        public void onClick(View v) {
 	            Intent intent = new Intent();
@@ -121,7 +134,9 @@ public class Activity_Conversation extends Activity {
 	            finish();
 	        }
 	    });
-	    /* Adding search functionality*/
+	    /** 
+	     * Adding search functionality
+	     */
 		inputSearch.addTextChangedListener(new TextWatcher() {
 	        
 	        @Override
@@ -143,7 +158,9 @@ public class Activity_Conversation extends Activity {
 	        }
 	    });
 	}
-	
+	/**
+	 * Generate the SMS List
+	 */
 	public void smsListGenerate() {
 		// Create a uri to get all sms messages
 	    Uri smsURI = Uri.parse("content://sms");
@@ -215,6 +232,11 @@ public class Activity_Conversation extends Activity {
            	}
        	}
 	}
+	/**
+	 * Gets the Phone Number from each message
+	 * @param thread_id
+	 * @return phone number of user
+	 */
 	
 	public String getAddressFromThreadID(String thread_id)
     {
@@ -244,6 +266,10 @@ public class Activity_Conversation extends Activity {
        	return (address);
     }
 	
+	/**
+	 * Gets the photo from a specified contact
+	 * @return Photo in contacts
+	 */
 	public Bitmap getUserContactPhoto() {
         Bitmap userPhoto = null;
         ContentResolver cr = this.getContentResolver();
@@ -256,6 +282,11 @@ public class Activity_Conversation extends Activity {
         return userPhoto;
 	}
 	
+	/**
+	 * Gets the contact name from a given phone number (if it exists in contacts)
+	 * @param address
+	 * @return Contact Name
+	 */
 	public String getContactName(String address) {
         Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(address));  
         Cursor cs = getContentResolver().query(uri, new String[]{PhoneLookup.DISPLAY_NAME}, 
@@ -270,7 +301,11 @@ public class Activity_Conversation extends Activity {
         cs.close();
         return(address);
 	}
-	
+	/**
+	 * Converts date into a readable format
+	 * @param Date
+	 * @return Parsed version of date
+	 */
 	public String SimplifyDate(Long Date)
     {
 		SimpleDateFormat month_day_year = new SimpleDateFormat("MMMMM d, yyyy");
@@ -285,7 +320,10 @@ public class Activity_Conversation extends Activity {
 		}
 		return(month_day.format(messageDate));
     }
-	//inner broadcaster to receive messages
+	/**
+	 * Inner broadcaster to receive messages
+	 *
+	 */
 	public class NewMessageReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -308,7 +346,9 @@ public class Activity_Conversation extends Activity {
 	    unregisterReceiver(newMessageSignal);
 		super.onDestroy();
 	}
-	/* Action when long click on Contact Item */
+	/**
+	 *  Action when long click on Contact Item to allow delete
+	 */
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 	                                ContextMenuInfo menuInfo) {
@@ -326,6 +366,10 @@ public class Activity_Conversation extends Activity {
 	}
 	
 	@Override
+	/**
+	 * Please Review
+	 * @param menuItem
+	 */
 	public boolean onContextItemSelected(MenuItem item) {
 	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 	    switch (item.getItemId()) {
@@ -357,7 +401,11 @@ public class Activity_Conversation extends Activity {
 	            return super.onContextItemSelected(item);
 	    }
 	}
-	
+	/**
+	 * Delete Message Method
+	 * @param context What to delete
+	 * @param _id Android database ID for what is to be deleted
+	 */
 	public void deleteMessage(Context context, String _id){
 		 try {
 		        Uri deleterUri = Uri.parse("content://sms");

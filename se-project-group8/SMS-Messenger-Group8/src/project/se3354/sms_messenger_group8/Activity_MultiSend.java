@@ -20,7 +20,13 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
-
+/**
+ * 
+ * @author Group8
+ * 
+ * Activity for sending a SMS to multiple phone numbers
+ *
+ */
 public class Activity_MultiSend extends Activity {
 	
 	public static final int MAIN_ACTIVITY = 256;
@@ -37,6 +43,9 @@ public class Activity_MultiSend extends Activity {
 	ArrayAdapter<String> adapter;
 
 	@Override
+	/**
+	 * Creates the view for the multisending function
+	 */
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_multisend);
@@ -67,7 +76,9 @@ public class Activity_MultiSend extends Activity {
 	    	    }
 	    	}
 	    });
-	    
+	    /**
+	     * Allows for the add from contacts feature
+	     */
 	    addFromContacts.setOnClickListener(new View.OnClickListener() {
 	    	public void onClick(View v)
 	    	{
@@ -113,7 +124,11 @@ public class Activity_MultiSend extends Activity {
 	    	}
 	    });
 	}
-	
+	/**
+	 * Function for sending the SMS
+	 * @param phoneNumber Of recipient
+	 * @param message Message body
+	 */
 	public void sendMultiSMS(String phoneNumber, String message)
     {      	
 		if (Utils.isDefaultSmsApp(this)) {
@@ -157,6 +172,11 @@ public class Activity_MultiSend extends Activity {
         }
     }
 	
+	/**
+	 * Saves  user sent messages to URI
+	 * @param recipient
+	 * @param body
+	 */
 	public void saveUsersentSMS(String recipient, String body) {
         Uri threadIdUri = Uri.parse("content://mms-sms/threadID");
         Uri.Builder builder = threadIdUri.buildUpon();
@@ -173,6 +193,12 @@ public class Activity_MultiSend extends Activity {
         getContentResolver().insert(Uri.parse("content://sms/sent"), values);
     }
 	
+	/**
+	 * Returns the thread ID from URI database
+	 * @param uri
+	 * @param recipient
+	 * @return Thread ID value
+	 */
 	private Long get_thread_id(Uri uri, String recipient) {
         long threadId = 0;
         Cursor cursor = getContentResolver().query(uri, new String[] { "_id" },

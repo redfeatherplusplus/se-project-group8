@@ -43,6 +43,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.widget.Button;
 
+
+/**
+ * 
+ * @author Group8
+ * Activity for the Inbox View of Application
+ */
 public class Activity_Inbox extends Activity implements LoaderManager.LoaderCallbacks<ArrayList<MyMessage>> {
 	
 	public static final String DRAFT = "3";
@@ -69,6 +75,9 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	private NewMessageReceiver newMessageSignal = null;
 	    
 	@Override
+	/**
+	 * Populates the Inbox with Conversations when App is created
+	 */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_inbox);
@@ -97,7 +106,9 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 				R.layout.message_layout, smsList);
 		messagesList.setAdapter(mAdapter);
 		
-		/* Action when click on Contact Item */
+		/**
+		 *  Action when click on Contact Item
+		 */
 		messagesList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -112,7 +123,9 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 			}
 		}); 
 
-	    /* Adding search functionality*/
+	    /**
+	     *  Adding search functionality
+	     */
 		inputSearch.addTextChangedListener(new TextWatcher() {
 	        
 	        @Override
@@ -137,7 +150,9 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	        }
 	    });
 		
-	    /* Action when click "Return" button */
+	    /**
+	     *  Action when click "Return" button
+	     */
 	    btnReturn.setOnClickListener(new View.OnClickListener() {
 	        public void onClick(View v) {
 	            Intent intent = new Intent();
@@ -148,7 +163,9 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	    
 		getLoaderManager().initLoader(0, null, this).forceLoad();
 	}
-	
+	/**
+	 * Generates the SMS List
+	 */
 	public void smsListGenerate() {
 		// Create a uri to get all sms messages
 	    Uri smsURI = Uri.parse("content://sms");
@@ -207,6 +224,11 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
        	}
 	}
 	
+	/** 
+	 * Checks to see if Conversation already exists in inbox
+	 * @param thread_id Android database thread ID of message
+	 * @return
+	 */
 	public boolean convInSmsList(String thread_id) {
 		for (int i=0; i<smsList.size(); i++) {
 			if(smsList.get(i).getMessageThreadId().equals(thread_id)) {
@@ -216,7 +238,11 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 		//return false if no message in the sms list has that thread_id
 		return false;
 	}
-	
+	/**
+	 * Gets the phone number from a thread ID
+	 * @param thread_id Android store thread id
+	 * @return Phone Number
+	 */
 	public String getAddressFromThreadID(String thread_id)
     {
 		String address = "No Phone Number";
@@ -244,7 +270,11 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
        	}
        	return (address);
     }
-	
+	/**
+	 * Checks to see if phone number exists in contacts, if so returns the name
+	 * @param address Phone Number
+	 * @return Contact Name
+	 */
 	public String getContactName(String address) {
         Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(address));  
         Cursor cs = getContentResolver().query(uri, new String[]{PhoneLookup.DISPLAY_NAME},PhoneLookup.NUMBER+"='"+address+"'",null,null);
@@ -258,7 +288,11 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
         cs.close();
         return(address);
 	}
-	
+	/**
+	 * Simplifies the date into a readable format
+	 * @param Date Numerical Version of the date
+	 * @return Readable version of the date
+	 */
 	public String SimplifyDate(Long Date)
     {
 		SimpleDateFormat month_day_year = new SimpleDateFormat("MMMMM d, yyyy");
@@ -282,7 +316,10 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
     	getLoaderManager().restartLoader(0, null, this).forceLoad();
     }
 
-	//inner broadcaster to receive messages
+	/**
+	 * inner broadcaster to receive messages
+	 *
+	 */
 	public class NewMessageReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -306,7 +343,9 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 		}
 	}
 
-	/* Action when long click on Contact Item */
+	/**
+	 * Action when long click on Contact Item 
+	 */
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 	                                ContextMenuInfo menuInfo) {
@@ -324,6 +363,9 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	}
 	
 	@Override
+	/** 
+	 * Event Handler for when item is held for a long time
+	 */
 	public boolean onContextItemSelected(MenuItem item) {
 	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 	    switch (item.getItemId()) {
@@ -359,6 +401,11 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	    }
 	}
 	
+	/**
+	 * Deletes entire conversation from Inbox
+	 * @param context Location where data is stored
+	 * @param thread_id Thread ID of conversation as stored in Android database
+	 */
 	public void deleteConversation(Context context, String thread_id){
 		 try {
 		        Uri deleterUri = Uri.parse("content://sms");
@@ -389,6 +436,9 @@ public class Activity_Inbox extends Activity implements LoaderManager.LoaderCall
 	}
 	
 	@Override
+	/**
+	 * Resumes updating the inbox
+	 */
     protected void onResume() {
 	    if (dataChanged == TRUE) {
 			// stop the loader

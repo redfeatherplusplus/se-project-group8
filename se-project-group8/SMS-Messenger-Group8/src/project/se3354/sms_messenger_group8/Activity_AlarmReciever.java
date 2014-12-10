@@ -25,11 +25,22 @@ import android.provider.Telephony;
 
 import java.lang.Object;
 
+/**
+ * @author Group8
+ * @version 81
+ * Alarm Receiving Class to notify user of sent and received messages
+ *
+ */
 
 public class Activity_AlarmReciever extends BroadcastReceiver
 {
 	Activity activity = new Activity();
          @Override
+         /**
+          * Alarm for Sending a Scheduled SMS
+          * @param context 
+          * @param intent
+          */
             public void onReceive(Context context, Intent intent)
             {
                     String phoneNumberReciver=Activity_ScheduleSend.txtNumber.getText().toString();
@@ -60,6 +71,12 @@ public class Activity_AlarmReciever extends BroadcastReceiver
              }
    
          //Context context;
+         /**
+          * Notifies when SMS fails to send
+          * @param phoneNumber
+          * @param message
+          * @param context
+          */
          public void sendSchedule(String phoneNumber, String message, Context context)
          {      	
         	 
@@ -86,7 +103,13 @@ public class Activity_AlarmReciever extends BroadcastReceiver
              
              
          }
-     	
+     	/**
+     	 *Saves user sent text messages to Android SMS database
+     	 * 
+     	 * @param recipient
+     	 * @param body
+     	 * @param context
+     	 */
      	public void saveUsersentSMS(String recipient, String body, Context context) {
      		Uri threadIdUri = Uri.parse("content://mms-sms/threadID");
             Uri.Builder builder = threadIdUri.buildUpon();
@@ -102,6 +125,14 @@ public class Activity_AlarmReciever extends BroadcastReceiver
              values.put("thread_id", thread_id);
              context.getContentResolver().insert(Uri.parse("content://sms/sent"), values);
          }
+     	
+     	/**
+     	 * Gets the thread ID of a URI
+     	 * @param uri
+     	 * @param recipient
+     	 * @param context
+     	 * @return
+     	 */
      	
      	private Long get_thread_id(Uri uri, String recipient, Context context) {
             long threadId = 0;

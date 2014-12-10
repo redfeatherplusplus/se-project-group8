@@ -17,7 +17,10 @@ import android.widget.Toast;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
-/* device receive the message and give a popup with the number and message body*/
+/**
+ *  @author Group8
+ *  Device receive the message and give a pop up with the number and message body
+ */
 public class Activity_Receiver extends BroadcastReceiver
 {        
 	private static String PhoneNoRec = "";
@@ -25,6 +28,9 @@ public class Activity_Receiver extends BroadcastReceiver
     private static String oldSMS = ""; 
 	 
     @Override
+    /**
+     *  Receives messages
+     */
     public void onReceive(Context context, Intent intent) 
     {
         /*get the message passed in */
@@ -123,6 +129,14 @@ public class Activity_Receiver extends BroadcastReceiver
     	
     }
     
+    /**
+     * Saves sent SMS messages
+     * 
+     * @param recipient
+     * @param body
+     * @param context
+     */
+    
     protected void saveReceivedSMS(String recipient, String body, Context context) {
         Uri threadIdUri = Uri.parse("content://mms-sms/threadID");
         Uri.Builder builder = threadIdUri.buildUpon();
@@ -139,6 +153,14 @@ public class Activity_Receiver extends BroadcastReceiver
         context.getContentResolver().insert(Uri.parse("content://sms/inbox"), values);
     }
     
+    /**
+     * Returns thread ID value from URI database
+     * 
+     * @param uri
+     * @param recipient
+     * @param context
+     * @return
+     */
     private Long get_thread_id(Uri uri, String recipient, Context context) {
         long threadId = 0;
         Cursor cursor = context.getContentResolver().query(uri, new String[] { "_id" },

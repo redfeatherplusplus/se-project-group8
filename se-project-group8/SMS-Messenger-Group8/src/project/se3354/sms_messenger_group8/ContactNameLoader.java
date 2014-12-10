@@ -19,11 +19,21 @@ import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
 import android.widget.ImageView;
 
+/**
+ * Converts phone numbers to contact ID's saved in databases
+ * @author Group8
+ *
+ */
 public final class ContactNameLoader extends AsyncTaskLoader<ArrayList<MyMessage>> {
 
 	private ArrayList<MyMessage> smsMessages;
 	Context context;
 	
+	/**
+	 * Loads SMS contacts
+	 * @param context 
+	 * @param smsMessages
+	 */
     public ContactNameLoader(Context context, ArrayList<MyMessage> smsMessages) {
 		super(context);
 		this.smsMessages = smsMessages;
@@ -31,6 +41,9 @@ public final class ContactNameLoader extends AsyncTaskLoader<ArrayList<MyMessage
 		// TODO Auto-generated constructor stub
 	}
     @Override
+    /**
+     * Begins loading SMS. Does so in its own thread
+     */
     protected synchronized void onStartLoading() {
             // just make sure if we already have content to deliver
             if (smsMessages != null)
@@ -42,11 +55,17 @@ public final class ContactNameLoader extends AsyncTaskLoader<ArrayList<MyMessage
     }
 
     @Override
+    /**
+     * Stops loading the SMS list
+     */
     protected synchronized void onStopLoading() {
             cancelLoad();
     }
 
     @Override
+    /**
+     * Resets SMS loading
+     */
     protected synchronized void onReset() {
             super.onReset();
 
@@ -59,6 +78,9 @@ public final class ContactNameLoader extends AsyncTaskLoader<ArrayList<MyMessage
     }
     
     @Override
+    /**
+     * Loads message in background
+     */
     public synchronized ArrayList<MyMessage> loadInBackground() {
     	for(int i=0; i<smsMessages.size(); i++) {
     		//get the phone number of this smsMessage to reference with on the contact list
@@ -78,6 +100,12 @@ public final class ContactNameLoader extends AsyncTaskLoader<ArrayList<MyMessage
         return smsMessages;
     }
     
+    /**
+     * Gets contact name from database
+     * 
+     * @param address
+     * @return
+     */
 	public synchronized String getContactName(String address) {
         Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(address));  
         Cursor cs = context.getContentResolver().query(uri, new String[]{PhoneLookup.DISPLAY_NAME}, 
@@ -96,6 +124,12 @@ public final class ContactNameLoader extends AsyncTaskLoader<ArrayList<MyMessage
         }
 	}
 	
+	/**
+	 * Retrieves contact photo from contact database
+	 * 
+	 * @param address
+	 * @return bitmap photo
+	 */
 	public synchronized Bitmap getContactPhoto(String address) {
         Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(address)); 
         ContentResolver cr = getContext().getContentResolver();

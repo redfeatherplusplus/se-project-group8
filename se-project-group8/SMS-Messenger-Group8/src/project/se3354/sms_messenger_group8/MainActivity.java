@@ -36,6 +36,11 @@ import java.lang.Object;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Main activity for home screen
+ * @author Group8
+ *
+ */
 public class MainActivity extends Activity 
 {
 	public static final int MAIN_ACTIVITY = 256;
@@ -64,7 +69,9 @@ public class MainActivity extends Activity
 	public static int autoSaveOn=1;
 	public static int autoReplyOn=0;
 
-    /* Called when the activity is first created. */
+    /**
+     *  Called when the activity is first created. 
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {   
@@ -95,7 +102,9 @@ public class MainActivity extends Activity
         //register context menu for btnAddContact
         registerForContextMenu(findViewById(R.id.btnAddContact));
         
-        /* Action when click "From Contacts" button */             
+        /**
+         *  Action when click "From Contacts" button  
+         */             
         btnFindContactNo.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) { 
@@ -111,7 +120,9 @@ public class MainActivity extends Activity
             }
         });
         
-        /* Action when click "Add as Contact" button */             
+        /**
+         *  Action when click "Add as Contact" button 
+         */             
         btnAddContact.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) { 
@@ -133,7 +144,9 @@ public class MainActivity extends Activity
             }
         });
         
-        /* Action when click "Add More" button */ 
+        /**
+         *  Action when click "Add More" button 
+         */ 
         btnAddMoreNo.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) { 
@@ -146,7 +159,9 @@ public class MainActivity extends Activity
             }
         });
         
-        /* Action when click "Send" button */             
+        /**
+         *  Action when click "Send" button 
+         */             
         btnSendSMS.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) 
@@ -181,7 +196,9 @@ public class MainActivity extends Activity
             }
         });
         
-        /* Action when click "Send later" button */
+        /**
+         *  Action when click "Send later" button 
+         */
         btnScheduleSend.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) {
@@ -226,7 +243,9 @@ public class MainActivity extends Activity
         
         
         
-        /* Action when click "Save Draft" button */             
+        /** 
+         * Action when click "Save Draft" button 
+         */             
         btnSaveDraft.setOnClickListener(new View.OnClickListener() 
         {
         	public void onClick(View v) { 
@@ -264,7 +283,9 @@ public class MainActivity extends Activity
             }
         });
         
-        /* Action when click "Get into Inbox" button.--- Main layout-->Inbox layout----*/             
+        /**
+         *  Action when click "Get into Inbox" button.--- Main layout-->Inbox layout----
+         */             
         btnInbox.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) {
@@ -273,7 +294,9 @@ public class MainActivity extends Activity
             }
         });
         
-        /* Action when click "Open Draft" button.--- Main layout-->Draft layout----*/             
+        /**
+         *  Action when click "Open Draft" button.--- Main layout-->Draft layout----
+         */             
         btnOpenDraft.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) {
@@ -428,7 +451,9 @@ public class MainActivity extends Activity
         }
     }
     
-    /* Context Menu that appears on btnAddContact press */
+    /**
+     *  Context Menu that appears on btnAddContact press 
+     */
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 	                                ContextMenuInfo menuInfo) {
@@ -440,6 +465,9 @@ public class MainActivity extends Activity
 	}
 	
 	@Override
+	/**
+	 * Add Contact button
+	 */
 	public boolean onContextItemSelected(MenuItem item) {
 	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 	    switch (item.getItemId()) {
@@ -460,7 +488,9 @@ public class MainActivity extends Activity
 	    }
 	}
 
-    /* Method of sending a message to another device */
+    /**
+     *  Method of sending a message to another device 
+     */
     public void sendSMS(String phoneNumber, String message)
     {  
     	if (Utils.isDefaultSmsApp(this)) {
@@ -517,7 +547,11 @@ public class MainActivity extends Activity
              }
         }
     }    
-
+    /**
+     * Save user sent message
+     * @param recipient 
+     * @param body Body of message
+     */
     public void saveUsersentSMS(String recipient, String body) {
         Uri threadIdUri = Uri.parse("content://mms-sms/threadID");
         Uri.Builder builder = threadIdUri.buildUpon();
@@ -534,6 +568,11 @@ public class MainActivity extends Activity
         getContentResolver().insert(Uri.parse("content://sms/sent"), values);
     }
     
+    /**
+     * Save draft functionality
+     * @param recipient
+     * @param body
+     */
     public void saveDraft(String recipient, String body) {
         Uri threadIdUri = Uri.parse("content://mms-sms/threadID");
         Uri.Builder builder = threadIdUri.buildUpon();
@@ -550,6 +589,12 @@ public class MainActivity extends Activity
         getContentResolver().insert(Uri.parse("content://sms/draft"), values);
     }
     
+    /**
+     * Gets thread ID from database
+     * @param uri android database
+     * @param recipient of message
+     * @return
+     */
     private Long get_thread_id(Uri uri, String recipient) {
         long threadId = 0;
         Cursor cursor = getContentResolver().query(uri, new String[] { "_id" },

@@ -19,6 +19,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * Activity to handle sending scheduled message sending
+ * 
+ * @author Group 8
+ *
+ */
 public class Activity_ScheduleSend extends Activity {
 	
 	static EditText txtDay;
@@ -31,6 +37,9 @@ public class Activity_ScheduleSend extends Activity {
 	Button btnBack;
 	Button btnCancel;
 	@Override
+	/**
+	 * Receives info from text fields
+	 */
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_schedule_send);
@@ -67,6 +76,10 @@ public class Activity_ScheduleSend extends Activity {
         
     }
 	
+	/**
+	 * Alerts user when scheduled message is sent
+	 * @param v View
+	 */
 	public void cancelAlarm(View v) {
 		// create the AlarmManager object
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);

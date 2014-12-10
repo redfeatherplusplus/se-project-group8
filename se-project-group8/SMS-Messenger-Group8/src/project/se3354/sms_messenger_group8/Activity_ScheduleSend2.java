@@ -13,6 +13,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+/**
+ * Scheduled sending 
+ * @author Group 8
+ *
+ */
 public class Activity_ScheduleSend2 extends Activity {
 	
 	static TextView textView2;

@@ -35,7 +35,12 @@ import android.graphics.BitmapFactory;
 import android.app.Activity;
 import android.content.Intent;
 import android.widget.Button;
-
+/**
+ * 
+ * @author Group8
+ * Activity for Viewing, Editing and Sending Draft Messages
+ *
+ */
 public class Activity_Drafts extends Activity implements LoaderManager.LoaderCallbacks<ArrayList<MyMessage>>{
 	
 	public static final String DRAFT = "3";
@@ -67,6 +72,9 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
 	    ContactsContract.Data.DISPLAY_NAME + " != '' ))";
 	    
 	@Override
+	/**
+	 * Method to populate the list of drafts when view is opened
+	 */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_inbox);
@@ -87,7 +95,9 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
 				R.layout.message_layout, smsList);
 		messagesList.setAdapter(mAdapter);
 		
-		/* Action when click on Draft Item */
+		/**
+		 *  Action when click on Draft Item 
+		 */
 		messagesList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -108,7 +118,9 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
 			}
 		}); 
 
-	    /* Adding search functionality*/
+	    /**
+	     *  Adding search functionality
+	     */
 		inputSearch.addTextChangedListener(new TextWatcher() {
 	        
 	        @Override
@@ -130,7 +142,9 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
 	        }
 	    });
 		
-	    /* Action when click "Return" button */
+	    /** 
+	     * Action when click "Return" button 
+	     */
 	    btnReturn.setOnClickListener(new View.OnClickListener() {
 	        public void onClick(View v) {
 	            Intent intent = new Intent();
@@ -141,7 +155,9 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
 	    
 		getLoaderManager().initLoader(0, null, this).forceLoad();
 	}
-	
+	/**
+	 * Generates the SMS List of drafts
+	 */
 	public synchronized void smsListGenerate() {
 		// Create a uri to get all sms messages
 	    Uri smsURI = Uri.parse("content://sms");
@@ -182,7 +198,11 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
            	}
        	}
 	}
-	
+	/**
+	 * Method to delete a draft
+	 * @param context Context of draft to be deleted
+	 * @param _id Phone Number of recipient of draft
+	 */
 	public void deleteMessage(Context context, String _id){
 		 try {
 		        Uri deleterUri = Uri.parse("content://sms");
@@ -204,7 +224,11 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
 		    	e.printStackTrace();
 		    }
 	}
-	
+	/**
+	 * Gets the phone number from the thread ID
+	 * @param thread_id Android ThreadID of message
+	 * @return phone Number
+	 */
 	public String getAddressFromThreadID(String thread_id)
     {
 		String address = "No Phone Number";
@@ -233,7 +257,11 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
        	
        	return (address);
     }
-	
+	/**
+	 * Gets Contact name from Contacts
+	 * @param address Phone Number from message
+	 * @return Contact Name
+	 */
 	public String getContactName(String address) {
         Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(address));  
         Cursor cs = getContentResolver().query(uri, new String[]{PhoneLookup.DISPLAY_NAME},PhoneLookup.NUMBER+"='"+address+"'",null,null);
@@ -247,7 +275,11 @@ public class Activity_Drafts extends Activity implements LoaderManager.LoaderCal
         cs.close();
         return(address);
 	}
-	
+	/**
+	 * Simplify the data to a readable format
+	 * @param Date Date as stored by Android
+	 * @return Readable form of date
+	 */
 	public String SimplifyDate(Long Date)
     {
 		SimpleDateFormat month_day_year = new SimpleDateFormat("MMMMM d, yyyy");

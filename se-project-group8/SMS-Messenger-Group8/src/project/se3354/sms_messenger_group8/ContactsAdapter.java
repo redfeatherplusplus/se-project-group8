@@ -23,6 +23,11 @@ import android.widget.ImageView;
 //import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * Custom Adapter for generating message list
+ * @author Group 8
+ *
+ */
 public class ContactsAdapter extends ArrayAdapter<MyMessage> implements Filterable {
     public static boolean searchingForContact = false;
 	private final Context context;
@@ -93,6 +98,9 @@ public class ContactsAdapter extends ArrayAdapter<MyMessage> implements Filterab
     }
     
     @Override
+    /**
+     * Returns message filter
+     */
     public Filter getFilter()
     {
         if (filter == null)
@@ -101,6 +109,11 @@ public class ContactsAdapter extends ArrayAdapter<MyMessage> implements Filterab
         return filter;
     }
     
+    /**
+     * Message filter to grab conversations
+     * @author Group8
+     *
+     */
     private class MessageFilter extends Filter
     {
         @Override
@@ -172,7 +185,12 @@ public class ContactsAdapter extends ArrayAdapter<MyMessage> implements Filterab
             }
         }
     }
-
+    
+    /**
+     * Placeholder for values
+     * @author Group8
+     *
+     */
     static class ViewHolder
     {
     	ImageView icon;

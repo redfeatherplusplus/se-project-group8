@@ -24,6 +24,12 @@ public class Activity_Receiver_NonDefault extends BroadcastReceiver
     private static String MessageRec = "";
     private static String oldSMS = ""; 
 	 
+    /**
+     * Message Receiving
+     * 
+     * @param context
+     * @param intent
+     */
     @Override
     public void onReceive(Context context, Intent intent) 
     {
@@ -117,12 +123,25 @@ public class Activity_Receiver_NonDefault extends BroadcastReceiver
         context.sendBroadcast(updateConv);
 
     }
-    
+    /** 
+     * Returns SMS message
+     * 
+     * @param msgs
+     * @param pdus
+     * @param context
+     * @param smsString
+     */
     public void getSmsMessage(SmsMessage[] msgs, Object[] pdus, Context context, 
     		String smsString) {
     	
     }
-    
+    /**
+     * Save Received Message
+     * 
+     * @param recipient
+     * @param body
+     * @param context
+     */
     protected void saveReceivedSMS(String recipient, String body, Context context) {
         Uri threadIdUri = Uri.parse("content://mms-sms/threadID");
         Uri.Builder builder = threadIdUri.buildUpon();
@@ -139,6 +158,13 @@ public class Activity_Receiver_NonDefault extends BroadcastReceiver
         context.getContentResolver().insert(Uri.parse("content://sms/inbox"), values);
     }
     
+    /**
+     * Get Thread ID from Android Database
+     * @param uri
+     * @param recipient
+     * @param context
+     * @return
+     */
     private Long get_thread_id(Uri uri, String recipient, Context context) {
         long threadId = 0;
         Cursor cursor = context.getContentResolver().query(uri, new String[] { "_id" },

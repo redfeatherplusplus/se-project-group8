@@ -21,6 +21,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.widget.Button;
 
+/**
+ * 
+ * @author Group8
+ * Activity displays list of phone numbers
+ *
+ */
+
 public class Activity_Contacts extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	public static final int MAIN_ACTIVITY = 256;
@@ -62,6 +69,10 @@ public class Activity_Contacts extends Activity implements LoaderManager.LoaderC
     private String[] mSelectionArgs = { mSearchString, mSearchString };
     
 	@Override
+	/**
+	 * Create method which displays the list of contacts
+	 * @param savedInstanceState
+	 */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_contacts);
@@ -90,6 +101,9 @@ public class Activity_Contacts extends Activity implements LoaderManager.LoaderC
 		/* Action when click on Contact Item */
 		ContactsList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
+			/**
+			 * Handles the event when user clicks on a contact
+			 */
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Cursor Contact = (Cursor) parent.getItemAtPosition(position);
@@ -117,7 +131,9 @@ public class Activity_Contacts extends Activity implements LoaderManager.LoaderC
 			}
 		}); 
 		
-	    /* Action when click "Return" button */
+	    /**
+	     *  Action when click "Return" button 
+	     */
 	    btnReturn.setOnClickListener(new View.OnClickListener() {
 	        public void onClick(View v) {
 	            Intent intent = new Intent();
@@ -131,7 +147,9 @@ public class Activity_Contacts extends Activity implements LoaderManager.LoaderC
 		getLoaderManager().initLoader(0, null, this);
 	}
 	
-	// Called when a new Loader needs to be created
+	/** Called when a new Loader needs to be created
+	 * 
+	 */
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 	// Now create and return a CursorLoader that will take care of
 	// creating a Cursor for the data being displayed.
@@ -139,14 +157,18 @@ public class Activity_Contacts extends Activity implements LoaderManager.LoaderC
 	        PROJECTION, SELECTION, mSelectionArgs, null);
 	}
 	
-	// Called when a previously created loader has finished loading
+	/** Called when a previously created loader has finished loading
+	 * 
+	 */
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 	// Swap the new cursor in.  (The framework will take care of closing the
 	// old cursor once we return.)
 	mAdapter.swapCursor(data);
 	}
 	
-	// Called when a previously created loader is reset, making the data unavailable
+	/** Called when a previously created loader is reset, making the data unavailable
+	 * 
+	 */
 	public void onLoaderReset(Loader<Cursor> loader) {
 	// This is called when the last Cursor provided to onLoadFinished()
 	// above is about to be closed.  We need to make sure we are no
